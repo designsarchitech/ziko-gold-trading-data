@@ -48,6 +48,15 @@
   .last-posted { border-top: 1px solid #2c2c34; margin-top: 12px; padding-top: 10px; font-size: 13.5px; color: #b8b0a0; line-height: 1.8; }
   .last-posted b { color: #f2ede0; }
   .news-item { background: #17171d; border: 1px solid #2c2c34; border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; font-size: 14.5px; line-height: 1.6; }
+  .hist-item { background: #17171d; border: 1px solid #2c2c34; border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; font-size: 14px; line-height: 1.7; }
+  .hist-item .h-head { display: flex; justify-content: space-between; gap: 6px 10px; flex-wrap: wrap; font-weight: 800; }
+  .hist-item .h-kind { color: #8d8778; font-size: 12.5px; font-weight: 400; }
+  .hist-item .h-nums { color: #b8b0a0; }
+  .hist-item .h-nums b { color: #f2ede0; }
+  .hist-item .h-res { margin-top: 4px; font-weight: 800; }
+  .hist-item .h-res.tp1, .hist-item .h-res.both { color: #5eead4; }
+  .hist-item .h-res.open { color: #ffd75e; }
+  .hist-item .h-res.sl { color: #ff7a7a; }
   .news-item .t { color: #8d8778; font-size: 12.5px; }
   .alerts-box { background: #17171d; border: 1px solid #2c2c34; border-radius: 16px; padding: 16px 14px; }
   .alerts-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
@@ -105,6 +114,9 @@
   <div class="updated"><span data-i18n="lastUpdate"></span>: <span id="lastUpdate">—</span></div>
   <div id="signalCards"></div>
 
+  <h2 data-i18n="historyTitle"></h2>
+  <div id="historyList"></div>
+
   <h2 data-i18n="newsTitle"></h2>
   <div id="newsList"></div>
 
@@ -141,7 +153,7 @@
 <script>
 "use strict";
 var _sp = document.querySelector("#splash img"); if (_sp) { document.getElementById("headerLogo").src = _sp.src; }
-const SNAPSHOT_FEED = {"channel": "Ziko Gold Trading", "telegram": "https://t.me/zikogoldtrading", "facebook": "https://www.facebook.com/zikogoldtrading", "updated_at": "2026-11-20T16:29:21+02:00", "updated_at_utc": "2026-11-20T14:29:21Z", "method": "Scalping H1 + 30M + 15M (15M timeframe, closed candles only)", "spot": {"gold": 3581.649902, "silver": 42.044998, "currency": "USD", "source": "gold-api.com"}, "gold": {"symbol": "XAUUSD", "signal": "WAIT", "direction": "sell", "bias": "bearish", "entry": 3572, "sl": 3583, "tp1": 3561, "tp2": 3550, "condition": "Conditional SELL on retest of 15M EMA21 at 3572", "last_analysis": "2026-11-20T16:30:00+02:00", "last_signal_posted": {"signal": "SELL SCALP", "entry": 3686, "sl": 3697, "tp1": 3675, "tp2": 3669, "posted_at": "2026-11-19T20:02:00+02:00", "result": "TP1 hit, TP2 hit later"}}, "silver": {"symbol": "XAGUSD", "signal": "WAIT", "direction": "sell", "bias": "bearish", "entry": 42.11, "sl": 42.53, "tp1": 41.69, "tp2": 41.27, "condition": "Conditional SELL on retest of 15M EMA21 at 42.11", "last_analysis": "2026-11-20T16:30:00+02:00", "last_signal_posted": {"signal": "SELL SCALP", "entry": 42.19, "sl": 42.58, "tp1": 41.8, "tp2": 41.57, "posted_at": "2026-11-20T14:15:00+02:00", "result": "TP1 hit"}}, "news": [{"time": "2026-11-20T17:00:00+02:00", "text": "مؤشر ميشيغان لثقة المستهلك الأمريكي"}], "disclaimer": "Educational analysis only, not financial advice."};
+const SNAPSHOT_FEED = {"channel": "Ziko Gold Trading", "telegram": "https://t.me/zikogoldtrading", "facebook": "https://www.facebook.com/zikogoldtrading", "updated_at": "2026-11-20T16:29:21+02:00", "updated_at_utc": "2026-11-20T14:29:21Z", "method": "Scalping H1 + 30M + 15M (15M timeframe, closed candles only)", "spot": {"gold": 3581.649902, "silver": 42.044998, "currency": "USD", "source": "gold-api.com"}, "gold": {"symbol": "XAUUSD", "signal": "WAIT", "direction": "sell", "bias": "bearish", "entry": 3572, "sl": 3583, "tp1": 3561, "tp2": 3550, "condition": "Conditional SELL on retest of 15M EMA21 at 3572", "last_analysis": "2026-11-20T16:30:00+02:00", "last_signal_posted": {"signal": "SELL SCALP", "entry": 3686, "sl": 3697, "tp1": 3675, "tp2": 3669, "posted_at": "2026-11-19T20:02:00+02:00", "result": "TP1 hit, TP2 hit later"}}, "silver": {"symbol": "XAGUSD", "signal": "WAIT", "direction": "sell", "bias": "bearish", "entry": 42.11, "sl": 42.53, "tp1": 41.69, "tp2": 41.27, "condition": "Conditional SELL on retest of 15M EMA21 at 42.11", "last_analysis": "2026-11-20T16:30:00+02:00", "last_signal_posted": {"signal": "SELL SCALP", "entry": 42.19, "sl": 42.58, "tp1": 41.8, "tp2": 41.57, "posted_at": "2026-11-20T14:15:00+02:00", "result": "TP1 hit"}}, "news": [{"time": "2026-11-20T17:00:00+02:00", "text": "مؤشر ميشيغان لثقة المستهلك الأمريكي"}], "disclaimer": "Educational analysis only, not financial advice.", "history": [{"direction": "SELL", "entry": 41.95, "id": "2026-11-20-1647-scalp-XAGUSD", "kind": "scalp", "posted_at": "2026-11-20T16:47:00+02:00", "result": "tp1", "result_at": "2026-11-20T17:32:00+02:00", "sl": 42.37, "symbol": "XAGUSD", "telegram_msg_id": 100, "tp1": 41.53, "tp2": 41.11}, {"direction": "SELL", "entry": 3569, "id": "2026-11-20-1647-scalp-XAUUSD", "kind": "scalp", "posted_at": "2026-11-20T16:47:00+02:00", "result": "both", "result_at": "2026-11-20T17:32:00+02:00", "sl": 3583, "symbol": "XAUUSD", "telegram_msg_id": 99, "tp1": 3555, "tp2": 3541}, {"direction": "SELL", "entry": 42.19, "id": "2026-11-20-1415-scalp-XAGUSD", "kind": "scalp", "posted_at": "2026-11-20T14:15:00+02:00", "result": "both", "result_at": "2026-11-20T15:45:00+02:00", "sl": 42.58, "symbol": "XAGUSD", "telegram_msg_id": 93, "tp1": 41.8, "tp2": 41.57}, {"direction": "SELL", "entry": 44.41, "id": "2026-11-19-2016-scalp-XAGUSD", "kind": "scalp", "posted_at": "2026-11-19T20:16:00+02:00", "result": "both", "result_at": "2026-11-19T23:15:00+02:00", "sl": 44.71, "symbol": "XAGUSD", "telegram_msg_id": 44, "tp1": 44.11, "tp2": 43.81}, {"direction": "SELL", "entry": 3686, "id": "2026-11-19-2002-scalp-XAUUSD", "kind": "scalp", "posted_at": "2026-11-19T20:02:00+02:00", "result": "both", "result_at": "2026-11-19T22:45:00+02:00", "sl": 3697, "symbol": "XAUUSD", "telegram_msg_id": 43, "tp1": 3675, "tp2": 3669}, {"direction": "SELL", "entry": 44.78, "id": "2026-11-19-1734-scalp-XAGUSD", "kind": "scalp", "posted_at": "2026-11-19T17:34:00+02:00", "result": "both", "result_at": "2026-11-19T19:33:00+02:00", "sl": 45.13, "symbol": "XAGUSD", "telegram_msg_id": null, "tp1": 44.43, "tp2": 44.08}, {"direction": "SELL", "entry": 3726, "id": "2026-11-19-1216-scalp-XAUUSD", "kind": "scalp", "posted_at": "2026-11-19T12:16:00+02:00", "result": "both", "result_at": "2026-11-19T19:49:00+02:00", "sl": 3736, "symbol": "XAUUSD", "telegram_msg_id": 22, "tp1": 3716, "tp2": 3706}, {"direction": "SELL", "entry": 45.07, "id": "2026-11-19-1054-scalp-XAGUSD", "kind": "scalp", "posted_at": "2026-11-19T10:54:00+02:00", "result": "both", "result_at": null, "sl": 45.37, "symbol": "XAGUSD", "telegram_msg_id": 19, "tp1": 44.77, "tp2": 44.47}, {"direction": "SELL", "entry": 45.25, "id": "2026-11-19-0851-scalp-XAGUSD", "kind": "scalp", "posted_at": "2026-11-19T08:51:00+02:00", "result": "both", "result_at": null, "sl": 45.58, "symbol": "XAGUSD", "telegram_msg_id": 14, "tp1": 44.92, "tp2": 44.6}, {"direction": "SELL", "entry": 3732, "id": "2026-11-19-0851-scalp-XAUUSD", "kind": "scalp", "posted_at": "2026-11-19T08:51:00+02:00", "result": "both", "result_at": null, "sl": 3747, "symbol": "XAUUSD", "telegram_msg_id": 14, "tp1": 3717, "tp2": 3702}]};
 
 const T = {
   ar: {
@@ -181,6 +193,15 @@ const T = {
     loading: "جارٍ التحميل...",
     noData: "لا توجد بيانات بعد.",
     noNews: "لا توجد أخبار بعد.",
+    historyTitle: "سجل الإشارات",
+    historyEmpty: "لا توجد إشارات منشورة بعد.",
+    histTp1: "🎯 الهدف الأول",
+    histBoth: "🎯 الهدفين",
+    histOpen: "⏳ مفتوحة",
+    histSl: "🛑 وقف الخسارة",
+    histScalp: "سكالبنج",
+    histNormal: "تحليل متوسط المدى",
+    histResultAt: "وقت النتيجة",
     bearish: "🔻 هابط",
     bullish: "🔺 صاعد",
     sideways: "➡️ عرضي",
@@ -230,6 +251,15 @@ const T = {
     loading: "Loading...",
     noData: "No data yet.",
     noNews: "No news yet.",
+    historyTitle: "Signals history",
+    historyEmpty: "No signals posted yet.",
+    histTp1: "🎯 Target 1 hit",
+    histBoth: "🎯 Both targets hit",
+    histOpen: "⏳ Open",
+    histSl: "🛑 Stop loss hit",
+    histScalp: "Scalping",
+    histNormal: "Medium-term analysis",
+    histResultAt: "Result time",
     bearish: "🔻 Bearish",
     bullish: "🔺 Bullish",
     sideways: "➡️ Sideways",
@@ -264,6 +294,13 @@ function fmtTime(iso) {
   try {
     return new Intl.DateTimeFormat(lang === "ar" ? "ar-EG-u-nu-latn" : "en-US",
       { hour: "numeric", minute: "2-digit", hour12: true, timeZone: "Africa/Cairo" }).format(new Date(iso));
+  } catch (e) { return iso; }
+}
+function fmtDateTime(iso) {
+  if (!iso) return "—";
+  try {
+    return new Intl.DateTimeFormat(lang === "ar" ? "ar-EG-u-nu-latn" : "en-US",
+      { day: "numeric", month: "short", hour: "numeric", minute: "2-digit", hour12: true, timeZone: "Africa/Cairo" }).format(new Date(iso));
   } catch (e) { return iso; }
 }
 function esc(s) {
@@ -379,9 +416,31 @@ function renderNews() {
   }).join("");
 }
 
+function renderHistory() {
+  const box = document.getElementById("historyList");
+  const hist = (currentFeed && currentFeed.history) || [];
+  if (!hist.length) { box.innerHTML = '<div class="empty">' + esc(t("historyEmpty")) + "</div>"; return; }
+  box.innerHTML = hist.map(function (e) {
+    const metal = e.symbol === "XAGUSD" ? t("silver") : t("gold");
+    const dir = String(e.direction || "").toUpperCase() === "BUY" ? t("buy") : t("sell");
+    const kind = e.kind === "normal" ? t("histNormal") : t("histScalp");
+    let badgeCls = "open", badgeTxt = t("histOpen");
+    if (e.result === "both") { badgeCls = "both"; badgeTxt = t("histBoth"); }
+    else if (e.result === "tp1") { badgeCls = "tp1"; badgeTxt = t("histTp1"); }
+    else if (e.result === "sl") { badgeCls = "sl"; badgeTxt = t("histSl"); }
+    let res = '<div class="h-res ' + badgeCls + '">' + esc(badgeTxt) + "</div>";
+    if (e.result_at) res = '<div class="h-res ' + badgeCls + '">' + esc(badgeTxt) + " — " + esc(t("histResultAt")) + " " + esc(fmtTime(e.result_at)) + "</div>";
+    return '<div class="hist-item"><div class="h-head"><span>' + esc(metal) + " — " + esc(dir) +
+      ' <span class="h-kind">' + esc(kind) + "</span></span><span>" + esc(fmtDateTime(e.posted_at)) + "</span></div>" +
+      '<div class="h-nums">' + esc(t("entry")) + " <b>" + esc(e.entry) + "</b> · " + esc(t("stopLoss")) + " <b>" + esc(e.sl) + "</b> · " +
+      esc(t("tp1")) + " <b>" + esc(e.tp1) + "</b> · " + esc(t("tp2")) + " <b>" + esc(e.tp2) + "</b></div>" + res + "</div>";
+  }).join("");
+}
+
 function renderAll() {
   renderPrices();
   renderSignals();
+  renderHistory();
   renderNews();
 }
 
