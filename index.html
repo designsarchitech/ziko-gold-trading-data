@@ -22,6 +22,7 @@
   .pill .dot { width: 9px; height: 9px; border-radius: 50%; background: #2fbf71; display: inline-block; }
   .pill .dot.closed { background: #e05252; }
   #staleBanner { display: none; background: #3a1d1d; border: 1px solid #6b2f2f; color: #f3b8b8; border-radius: 12px; padding: 12px 14px; font-size: 14px; line-height: 1.6; margin-bottom: 14px; }
+  #staleBanner.updating { background: #221d12; border: 1px solid #5a4d24; color: #d8c98a; }
   .prices { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
   .price-card { background: #17171d; border: 1px solid #2c2c34; border-radius: 16px; padding: 16px 14px; }
   .price-card .name { font-size: 17px; font-weight: 700; }
@@ -95,7 +96,7 @@
     <div class="pill"><span class="dot" id="marketDot"></span><span id="marketPill" data-i18n="marketOpen"></span></div>
   </div>
 
-  <div id="staleBanner" data-i18n="staleBanner"></div>
+  <div id="staleBanner"></div>
 
   <div class="prices">
     <div class="price-card">
@@ -190,6 +191,7 @@ const T = {
     methodLine: "تحليل فني H4 + H1 + 30M + 15M — دخول ووقف وهدفين",
     disclaimer: "تحليل تعليمي فقط، وليس نصيحة مالية.",
     staleBanner: "تعذّر جلب تحديث أجدد دلوقتي — المعروض آخر بيانات محفوظة بالتطبيق، وهنحاول تاني تلقائياً.",
+    updating: "جارٍ تحديث البيانات...",
     loading: "جارٍ التحميل...",
     noData: "لا توجد بيانات بعد.",
     noNews: "لا توجد أخبار بعد.",
@@ -248,6 +250,7 @@ const T = {
     methodLine: "Technical analysis H4 + H1 + 30M + 15M — entry, stop and two targets",
     disclaimer: "Educational analysis only, not financial advice.",
     staleBanner: "Couldn't fetch a newer update right now — showing the last saved data. We'll retry automatically.",
+    updating: "Updating data…",
     loading: "Loading...",
     noData: "No data yet.",
     noNews: "No news yet.",
@@ -280,14 +283,63 @@ if (lang !== "ar" && lang !== "en") lang = "ar";
 
 let currentFeed = SNAPSHOT_FEED;
 let livePriceAt = { gold: null, silver: null };
-// Stability: the snapshot is first paint only. feedLive becomes true once a
-// live feed fetch is accepted; the stale banner stays visible until then.
+// Banner policy: the error banner must NOT appear on first paint while the
+// first live fetch is still in flight — show a subtle "updating" state
+// instead. The error banner appears only after the live fetch + one retry
+// have both failed with no live update for ~15s, or the displayed data is
+// older than ~10 minutes. fetchNewestFeed / the monotonic guard are untouched.
+const STALE_GRACE_MS = 15000;
+const STALE_DATA_MS = 10 * 60 * 1000;
+const RETRY_DELAY_MS = 5000;
 let feedLive = false;
+let bootAt = Date.now();
+let lastLiveAt = 0;       // ms of last accepted live feed (0 = never)
+let failedAttempts = 0;   // consecutive failed refreshFeed calls
+let feedInFlight = false; // a refreshFeed is currently pending
+let retryPending = false; // a retry is scheduled after a failure
+let bannerMode = "updating"; // "updating" | "error" | "hidden"
 function feedTimeMs(feed) {
   try { const t = Date.parse(feed && feed.updated_at); return isNaN(t) ? 0 : t; } catch (e) { return 0; }
 }
-function setStaleBanner(show) {
-  try { document.getElementById("staleBanner").style.display = show ? "block" : "none"; } catch (e) {}
+function feedAgeMs() { return Date.now() - feedTimeMs(currentFeed); }
+function sinceLiveMs() { return lastLiveAt ? Date.now() - lastLiveAt : Date.now() - bootAt; }
+function renderBanner() {
+  try {
+    const el = document.getElementById("staleBanner");
+    if (!el) return;
+    if (bannerMode === "hidden") { el.style.display = "none"; return; }
+    el.style.display = "block";
+    el.textContent = bannerMode === "error" ? t("staleBanner") : t("updating");
+    el.classList.toggle("updating", bannerMode === "updating");
+  } catch (e) {}
+}
+function setStaleBanner(show) { bannerMode = show ? "error" : "hidden"; renderBanner(); }
+function showUpdating() { bannerMode = "updating"; renderBanner(); }
+function hideBanner() { bannerMode = "hidden"; renderBanner(); }
+function evaluateStale() {
+  if (lastLiveAt && Date.now() - lastLiveAt < STALE_GRACE_MS) { hideBanner(); return; }
+  if (feedInFlight) { if (bannerMode !== "error") showUpdating(); return; }
+  if (retryPending) { if (bannerMode !== "error") showUpdating(); return; }
+  if (sinceLiveMs() >= STALE_GRACE_MS && failedAttempts >= 2) { setStaleBanner(true); return; }
+  if (sinceLiveMs() >= STALE_GRACE_MS && feedAgeMs() > STALE_DATA_MS) { setStaleBanner(true); return; }
+  if (bannerMode !== "error") showUpdating();
+}
+function noteLiveSuccess() {
+  lastLiveAt = Date.now();
+  failedAttempts = 0;
+  feedLive = true;
+  hideBanner();
+}
+function onFeedFailure() {
+  failedAttempts++;
+  if (failedAttempts === 1 && !retryPending) {
+    retryPending = true;
+    setTimeout(function () {
+      retryPending = false;
+      if (!feedInFlight) refreshFeed();
+    }, RETRY_DELAY_MS);
+  }
+  evaluateStale();
 }
 let lastSeenSignals = {};
 try { lastSeenSignals = JSON.parse(localStorage.getItem("zgt-last-seen") || "{}"); } catch (e) { lastSeenSignals = {}; }
@@ -324,6 +376,7 @@ function applyLang() {
   document.querySelectorAll("[data-i18n]").forEach(function (el) {
     el.textContent = t(el.getAttribute("data-i18n"));
   });
+  renderBanner(); // banner text follows the language (its mode is kept)
   try { localStorage.setItem("zgt-lang", lang); } catch (e) {}
   renderAll();
   updateMarketPill();
@@ -518,23 +571,28 @@ function addAlert(key, d) {
 }
 
 function refreshFeed() {
+  if (feedInFlight) return Promise.resolve(false);
+  feedInFlight = true;
   const sources = [
     "./signals.json",
     "https://raw.githubusercontent.com/designsarchitech/ziko-gold-trading-data/main/signals.json",
     "https://cdn.jsdelivr.net/gh/designsarchitech/ziko-gold-trading-data@main/signals.json"
   ];
   return fetchNewestFeed(sources).then(function (data) {
+    feedInFlight = false;
     // Monotonic guard: never replace the displayed feed with older data.
-    if (feedTimeMs(data) < feedTimeMs(currentFeed)) return false;
+    // A live fetch that returns only older data still proves connectivity,
+    // so it counts as a live contact (no error banner) without swapping data.
+    if (feedTimeMs(data) < feedTimeMs(currentFeed)) { noteLiveSuccess(); renderAll(); return false; }
     currentFeed = data;
-    feedLive = true;
     livePriceAt = { gold: null, silver: null };
-    setStaleBanner(false);
+    noteLiveSuccess();
     checkNewSignals(data);
     renderAll();
     return true;
   }).catch(function () {
-    setStaleBanner(true);
+    feedInFlight = false;
+    onFeedFailure();
     renderAll();
     return false;
   });
@@ -641,9 +699,12 @@ if (alertsEnabled && typeof Notification !== "undefined" && Notification.permiss
 syncAlertsUI();
 
 applyLang();
-// First paint is the embedded snapshot: show the stale banner until a live
-// feed fetch is accepted (refreshFeed hides it on success).
-setStaleBanner(true);
+// First paint is the embedded snapshot: show the subtle "updating" state,
+// NOT the error banner, while the first live fetch is in flight. The error
+// banner appears only via evaluateStale() (fetch + one retry failed with no
+// live update for ~15s, or displayed data older than ~10 minutes).
+showUpdating();
+setTimeout(evaluateStale, STALE_GRACE_MS);
 setTimeout(refreshAll, 300);
 // Signals feed polls every 30s so signal cards update promptly; live prices stay on 60s.
 setInterval(refreshFeed, 30000);
