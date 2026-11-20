@@ -539,6 +539,39 @@ setTimeout(function () {
   const sp = document.getElementById("splash");
   if (sp && sp.parentNode) sp.parentNode.removeChild(sp);
 }, 3550);
+
+// Capacitor push notifications (APK only — no-op in the browser).
+// The native side (FcmTokenService) already captures the FCM token into
+// Firestore; this only wires permission + foreground/tap handling.
+(function () {
+  try {
+    var cap = window.Capacitor;
+    if (!cap || !cap.Plugins || !cap.Plugins.PushNotifications) return;
+    var Push = cap.Plugins.PushNotifications;
+    try {
+      var perm = Push.requestPermissions();
+      if (perm && perm.then) {
+        perm.then(function (res) {
+          if (res && res.receive === "granted") { Push.register(); }
+        }).catch(function () {});
+      }
+    } catch (e) {}
+    Push.addListener("registration", function () {});
+    Push.addListener("registrationError", function () {});
+    Push.addListener("pushNotificationReceived", function (n) {
+      try {
+        if (n && n.data && (n.data.signal === "BUY" || n.data.signal === "SELL")) {
+          var key = n.data.symbol === "XAGUSD" ? "silver" : "gold";
+          addAlert(key, { signal: n.data.signal, entry: n.data.entry });
+        }
+        refreshFeed();
+      } catch (e) {}
+    });
+    Push.addListener("pushNotificationActionPerformed", function () {
+      try { refreshFeed(); } catch (e) {}
+    });
+  } catch (e) {}
+})();
 </script>
 </body>
 </html>
