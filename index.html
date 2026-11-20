@@ -13,9 +13,10 @@
   #splash img { width: 330px; height: 330px; object-fit: cover; border-radius: 28px; }
   .wrap { max-width: 560px; margin: 0 auto; padding: 18px 16px 40px; }
   header { display: flex; align-items: center; gap: 12px; }
-  header .logo { width: 64px; height: 64px; border-radius: 14px; object-fit: cover; flex: none; }
-  header h1 { font-family: Georgia, "Times New Roman", serif; color: #e8c15a; font-size: 22px; margin: 0; line-height: 1.2; }
-  header .sub { color: #b8b0a0; font-size: 14px; margin-top: 4px; }
+  header .logo { width: 100px; height: 100px; border-radius: 18px; object-fit: cover; flex: none; }
+  header h1 { font-family: Georgia, "Times New Roman", serif; color: #e8c15a; font-size: 30px; margin: 0; line-height: 1.2; }
+  header .sub { color: #b8b0a0; font-size: 15px; margin-top: 4px; }
+  header > div { flex: 1; min-width: 0; }
   #langBtn { margin-inline-start: auto; background: #1c1c22; color: #e8c15a; border: 1px solid #3a3a44; border-radius: 999px; padding: 8px 14px; font-size: 14px; font-weight: 700; cursor: pointer; flex: none; }
   .pills { display: flex; gap: 10px; margin: 18px 0 14px; }
   .pill { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; background: #17171d; border: 1px solid #2c2c34; border-radius: 999px; padding: 10px 8px; font-size: 15px; font-weight: 700; cursor: pointer; color: #f2ede0; }
@@ -30,6 +31,18 @@
   .price-card .val { font-size: 30px; font-weight: 800; margin: 10px 0 6px; direction: ltr; text-align: end; }
   .price-card .val small { font-size: 16px; color: #b8b0a0; }
   .price-card .note { color: #8d8778; font-size: 12.5px; line-height: 1.5; }
+  .sum-card { background: #17171d; border: 1px solid #2c2c34; border-radius: 16px; padding: 16px 14px; margin-bottom: 12px; }
+  .sum-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .sum-head .name { font-size: 18px; font-weight: 800; }
+  .sum-head .sym { color: #8d8778; font-size: 13px; margin-inline-start: 6px; font-weight: 400; }
+  .sum-price { font-size: 26px; font-weight: 800; direction: ltr; white-space: nowrap; }
+  .sum-price small { font-size: 14px; color: #b8b0a0; }
+  .sum-card .nums { margin-top: 12px; }
+  .sum-card .note { color: #8d8778; font-size: 12.5px; line-height: 1.5; margin-top: 10px; }
+  .chg.up { color: #5eead4; }
+  .chg.down { color: #ff7a7a; }
+  .sum-line { background: #17171d; border: 1px solid #2c2c34; border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; font-size: 15px; font-weight: 700; line-height: 1.6; }
+  .sum-news-label { color: #8d8778; font-size: 13px; margin: 4px 0 8px; }
   h2 { font-size: 20px; margin: 22px 0 4px; }
   .updated { color: #8d8778; font-size: 13px; margin-bottom: 12px; }
   .sig-card { background: #17171d; border: 1px solid #2c2c34; border-radius: 16px; padding: 16px 14px; margin-bottom: 12px; }
@@ -110,6 +123,9 @@
       <div class="note" id="silverPriceNote"></div>
     </div>
   </div>
+
+  <h2 data-i18n="summaryTitle"></h2>
+  <div id="summaryBox"></div>
 
   <h2 data-i18n="entrySignals"></h2>
   <div class="updated"><span data-i18n="lastUpdate"></span>: <span id="lastUpdate">—</span></div>
@@ -215,7 +231,16 @@ const T = {
     newSignal: "إشارة جديدة",
     tp1Hit: "تحقق الهدف الأول",
     tp1Tp2Hit: "تحقق الهدف الأول ثم الثاني",
-    noResult: "لا نتيجة بعد"
+    noResult: "لا نتيجة بعد",
+    summaryTitle: "ملخص السوق",
+    dayOpen: "الافتتاح",
+    dayHigh: "الأعلى",
+    dayLow: "الأدنى",
+    dayChange: "التغير",
+    signalsToday: "إشارات اليوم",
+    hitTargets: "حققت أهدافها",
+    noSignalsToday: "لا توجد إشارات منشورة اليوم",
+    summaryNews: "أبرز الأخبار"
   },
   en: {
     subtitle: "Live gold & silver signals, moment by moment",
@@ -275,7 +300,16 @@ const T = {
     newSignal: "New signal",
     tp1Hit: "TP1 hit",
     tp1Tp2Hit: "TP1 hit, then TP2",
-    noResult: "No result yet"
+    noResult: "No result yet",
+    summaryTitle: "Market summary",
+    dayOpen: "Open",
+    dayHigh: "High",
+    dayLow: "Low",
+    dayChange: "Change",
+    signalsToday: "signals today",
+    hitTargets: "hit their targets",
+    noSignalsToday: "No signals posted today",
+    summaryNews: "Top news"
   }
 };
 
@@ -285,6 +319,10 @@ if (lang !== "ar" && lang !== "en") lang = "ar";
 
 let currentFeed = SNAPSHOT_FEED;
 let livePriceAt = { gold: null, silver: null };
+// Market summary: day stats (open/high/low/change%) come from TradingView,
+// the app's existing second price channel — gold-api /price has no OHLC
+// fields, only price + updatedAt. Fetched on the 60s price cadence.
+let dayStats = { gold: null, silver: null };
 // Banner policy: the error banner must NOT appear on first paint while the
 // first live fetch is still in flight — show a subtle "updating" state
 // instead. The error banner appears only after the live fetch + one retry
@@ -513,8 +551,59 @@ function renderHistory() {
   }).join("");
 }
 
+function cairoDay(iso) {
+  try {
+    return new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Cairo", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(iso));
+  } catch (e) { return ""; }
+}
+function renderSummary() {
+  const box = document.getElementById("summaryBox");
+  if (!box) return;
+  const spot = (currentFeed && currentFeed.spot) || {};
+  let html = "";
+  [["gold", t("gold"), "XAU/USD"], ["silver", t("silver"), "XAG/USD"]].forEach(function (row) {
+    const key = row[0], name = row[1], sym = row[2];
+    const st = dayStats[key];
+    const chg = st && typeof st.change === "number" ? st.change : null;
+    const chgCls = chg === null ? "" : (chg >= 0 ? " up" : " down");
+    const chgTxt = chg === null ? "—" : (chg >= 0 ? "+" : "") + chg.toFixed(2) + "%";
+    const cell = function (lbl, v) { return "<div class=\"cell\"><div class=\"lbl\">" + esc(lbl) + "</div><div class=\"v\">" + esc(v) + "</div></div>"; };
+    html += "<div class=\"sum-card\"><div class=\"sum-head\"><span class=\"name\">" + esc(name) +
+      " <span class=\"sym\">" + sym + "</span></span>" +
+      "<span class=\"sum-price\"><small>$</small> " + esc(fmtPrice(spot[key])) + "</span></div>" +
+      "<div class=\"nums\">" +
+      cell(t("dayOpen"), st ? fmtPrice(st.open) : "—") +
+      cell(t("dayHigh"), st ? fmtPrice(st.high) : "—") +
+      cell(t("dayLow"), st ? fmtPrice(st.low) : "—") +
+      "<div class=\"cell\"><div class=\"lbl\">" + esc(t("dayChange")) + "</div><div class=\"v chg" + chgCls + "\">" + esc(chgTxt) + "</div></div>" +
+      "</div><div class=\"note\">" + esc(priceNote(key)) + "</div></div>";
+  });
+  // Today's signals — posted history only (single source of truth: never
+  // recomputed unposted analysis).
+  const today = cairoDay(new Date().toISOString());
+  const hist = (currentFeed && currentFeed.history) || [];
+  const todays = hist.filter(function (e) { return cairoDay(e.posted_at) === today; });
+  if (!todays.length) {
+    html += "<div class=\"sum-line\">" + esc(t("noSignalsToday")) + "</div>";
+  } else {
+    const hits = todays.filter(function (e) { return e.result === "tp1" || e.result === "both"; }).length;
+    html += "<div class=\"sum-line\">" + esc(todays.length + " " + t("signalsToday") + " — " + hits + " " + t("hitTargets")) + "</div>";
+  }
+  // Top 2 news — channel-posted news only (same data as the news section).
+  const news = (currentFeed && currentFeed.news) || [];
+  html += "<div class=\"sum-news-label\">" + esc(t("summaryNews")) + "</div>";
+  if (!news.length) {
+    html += "<div class=\"empty\">" + esc(t("noNews")) + "</div>";
+  } else {
+    html += news.slice(0, 2).map(function (n) {
+      return "<div class=\"news-item\"><div>" + esc(n.text) + "</div><div class=\"t\">" + esc(fmtTime(n.time)) + "</div></div>";
+    }).join("");
+  }
+  box.innerHTML = html;
+}
 function renderAll() {
   renderPrices();
+  renderSummary();
   renderSignals();
   renderHistory();
   renderNews();
@@ -653,7 +742,21 @@ function livePrice(metal) {
     return chain;
   }).catch(function () { return null; });
 }
+function fetchDayStats(metal) {
+  const url = metal === "gold"
+    ? "https://scanner.tradingview.com/symbol?symbol=OANDA:XAUUSD&fields=open,high,low,close,change,change_abs"
+    : "https://scanner.tradingview.com/symbol?symbol=TVC:SILVER&fields=open,high,low,close,change,change_abs";
+  return fetchWithTimeout(url, 12000).then(function (d) {
+    if (!d || typeof d.open !== "number" || typeof d.high !== "number" || typeof d.low !== "number") return null;
+    return { open: d.open, high: d.high, low: d.low, change: (typeof d.change === "number" ? d.change : null) };
+  }).catch(function () { return null; });
+}
 function refreshPrices() {
+  Promise.all([fetchDayStats("gold"), fetchDayStats("silver")]).then(function (st) {
+    if (st[0]) dayStats.gold = st[0];
+    if (st[1]) dayStats.silver = st[1];
+    renderSummary();
+  });
   return Promise.all([livePrice("gold"), livePrice("silver")]).then(function (res) {
     const now = new Date().toISOString();
     if (res[0]) {
@@ -671,6 +774,7 @@ function refreshPrices() {
       livePriceAt.silver = null;
     }
     renderPrices();
+    renderSummary();
   });
 }
 function refreshAll() {
