@@ -10,7 +10,7 @@
   a { color: inherit; }
   #splash { position: fixed; inset: 0; background: #0b0b0f; display: flex; align-items: center; justify-content: center; z-index: 100; transition: opacity .55s ease; }
   #splash.hide { opacity: 0; pointer-events: none; }
-  #splash img { width: 220px; height: 220px; object-fit: cover; border-radius: 28px; }
+  #splash img { width: 330px; height: 330px; object-fit: cover; border-radius: 28px; }
   .wrap { max-width: 560px; margin: 0 auto; padding: 18px 16px 40px; }
   header { display: flex; align-items: center; gap: 12px; }
   header .logo { width: 64px; height: 64px; border-radius: 14px; object-fit: cover; flex: none; }
@@ -35,6 +35,7 @@
   .sig-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   .sig-head .name { font-size: 18px; font-weight: 800; }
   .badge { border-radius: 999px; padding: 5px 12px; font-size: 14px; font-weight: 800; }
+  .state-ico { font-size: 28px; line-height: 1; margin-inline-start: 8px; }
   .badge.wait { background: #4a3d10; color: #ffd75e; }
   .badge.buy { background: #123d24; color: #5eead4; }
   .badge.sell { background: #4a1717; color: #ff7a7a; }
@@ -144,20 +145,20 @@ const T = {
     refresh: "تحديث",
     marketOpen: "السوق مفتوح",
     marketClosed: "السوق مغلق",
-    gold: "الذهب",
-    silver: "الفضة",
+    gold: "🥇 الذهب",
+    silver: "🥈 الفضة",
     lastPrice: "آخر سعر",
     fromSignals: "من بيانات الإشارات",
     livePrice: "سعر مباشر",
     entrySignals: "إشارات الدخول",
     lastUpdate: "آخر تحديث",
-    wait: "انتظار",
-    buy: "شراء",
-    sell: "بيع",
-    entry: "الدخول",
-    stopLoss: "وقف الخسارة",
-    tp1: "الهدف الأول",
-    tp2: "الهدف الثاني",
+    wait: "🟡 انتظار",
+    buy: "🟢 شراء",
+    sell: "🔴 بيع",
+    entry: "➡️ الدخول",
+    stopLoss: "🛑 وقف الخسارة",
+    tp1: "✅ الهدف الأول",
+    tp2: "✅ الهدف الثاني",
     lastPosted: "آخر إشارة منشورة",
     result: "النتيجة",
     newsTitle: "أخبار الذهب",
@@ -176,9 +177,9 @@ const T = {
     loading: "جارٍ التحميل...",
     noData: "لا توجد بيانات بعد.",
     noNews: "لا توجد أخبار بعد.",
-    bearish: "هابط 🔻",
-    bullish: "صاعد 🔺",
-    sideways: "عرضي ➡️",
+    bearish: "🔻 هابط",
+    bullish: "🔺 صاعد",
+    sideways: "➡️ عرضي",
     postedAt: "نُشرت",
     condSell: "بيع مشروط عند إعادة اختبار متوسط 15 دقيقة عند",
     condBuy: "شراء مشروط عند إعادة اختبار متوسط 15 دقيقة عند",
@@ -193,20 +194,20 @@ const T = {
     refresh: "Refresh",
     marketOpen: "Market open",
     marketClosed: "Market closed",
-    gold: "Gold",
-    silver: "Silver",
+    gold: "🥇 Gold",
+    silver: "🥈 Silver",
     lastPrice: "Last price",
     fromSignals: "from signals data",
     livePrice: "live price",
     entrySignals: "Entry signals",
     lastUpdate: "Last update",
-    wait: "Waiting",
-    buy: "Buy",
-    sell: "Sell",
-    entry: "Entry",
-    stopLoss: "Stop loss",
-    tp1: "Target 1",
-    tp2: "Target 2",
+    wait: "🟡 WAIT",
+    buy: "🟢 BUY",
+    sell: "🔴 SELL",
+    entry: "➡️ Entry",
+    stopLoss: "🛑 Stop loss",
+    tp1: "✅ Target 1",
+    tp2: "✅ Target 2",
     lastPosted: "Last posted signal",
     result: "Result",
     newsTitle: "Gold news",
@@ -225,9 +226,9 @@ const T = {
     loading: "Loading...",
     noData: "No data yet.",
     noNews: "No news yet.",
-    bearish: "Bearish 🔻",
-    bullish: "Bullish 🔺",
-    sideways: "Sideways ➡️",
+    bearish: "🔻 Bearish",
+    bullish: "🔺 Bullish",
+    sideways: "➡️ Sideways",
     postedAt: "Posted",
     condSell: "Conditional SELL on retest of 15M EMA21 at",
     condBuy: "Conditional BUY on retest of 15M EMA21 at",
@@ -289,6 +290,12 @@ function signalLabel(sig) {
   if (s.indexOf("SELL") === 0) return t("sell");
   return t("wait");
 }
+function stateIcon(sig) {
+  const s = String(sig || "").toUpperCase();
+  if (s.indexOf("BUY") === 0) return "🟢";
+  if (s.indexOf("SELL") === 0) return "🔴";
+  return "🟡";
+}
 function signalClass(sig) {
   const s = String(sig || "").toUpperCase();
   if (s.indexOf("BUY") === 0) return "buy";
@@ -296,8 +303,8 @@ function signalClass(sig) {
   return "wait";
 }
 function postedSignalLabel(sig) {
-  const map = { "SELL SCALP": { ar: "بيع سكالب", en: "SELL SCALP" }, "BUY SCALP": { ar: "شراء سكالب", en: "BUY SCALP" },
-    "SELL SETUP": { ar: "بيع", en: "SELL SETUP" }, "BUY SETUP": { ar: "شراء", en: "BUY SETUP" } };
+  const map = { "SELL SCALP": { ar: "🔴 بيع سكالب", en: "🔴 SELL SCALP" }, "BUY SCALP": { ar: "🟢 شراء سكالب", en: "🟢 BUY SCALP" },
+    "SELL SETUP": { ar: "🔴 بيع", en: "🔴 SELL SETUP" }, "BUY SETUP": { ar: "🟢 شراء", en: "🟢 BUY SETUP" } };
   const m = map[String(sig || "").toUpperCase()];
   return m ? m[lang] : sig;
 }
@@ -347,7 +354,7 @@ function renderSignals() {
     }
     html += "<div class=\"sig-card\"><div class=\"sig-head\"><span class=\"name\">" + esc(name) +
       " <span style=\"color:#8d8778;font-size:13px;font-weight:400\">" + sym + "</span></span>" +
-      "<span class=\"badge " + signalClass(d.signal) + "\">" + esc(signalLabel(d.signal)) + "</span></div>" +
+      "<span class=\"state-ico\">" + stateIcon(d.signal) + "</span>" + "<span class=\"badge " + signalClass(d.signal) + "\">" + esc(signalLabel(d.signal)) + "</span></div>" +
       "<div class=\"bias\">" + esc(biasText(d.bias)) + "</div>" +
       "<div class=\"nums\">" +
       "<div class=\"cell\"><div class=\"lbl\">" + esc(t("entry")) + "</div><div class=\"v\">" + esc(d.entry) + "</div></div>" +
@@ -527,11 +534,11 @@ setInterval(updateMarketPill, 60000);
 setTimeout(function () {
   const sp = document.getElementById("splash");
   if (sp) sp.classList.add("hide");
-}, 1400);
+}, 3000);
 setTimeout(function () {
   const sp = document.getElementById("splash");
   if (sp && sp.parentNode) sp.parentNode.removeChild(sp);
-}, 1950);
+}, 3550);
 </script>
 </body>
 </html>
