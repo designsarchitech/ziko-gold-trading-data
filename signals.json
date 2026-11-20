@@ -2,30 +2,30 @@
   "channel": "Ziko Gold Trading",
   "telegram": "https://t.me/zikogoldtrading",
   "facebook": "https://www.facebook.com/zikogoldtrading",
-  "updated_at": "2026-11-20T19:38:43+02:00",
-  "updated_at_utc": "2026-11-20T17:38:43Z",
+  "updated_at": "2026-11-20T19:45:34+02:00",
+  "updated_at_utc": "2026-11-20T17:45:34Z",
   "method": "Scalping H1 + 30M + 15M (15M timeframe, closed candles only)",
   "spot": {
-    "gold": 3528.27002,
-    "silver": 40.974998,
+    "gold": 3527.149902,
+    "silver": 40.945,
     "currency": "USD",
     "source": "gold-api.com"
   },
   "gold": {
     "symbol": "XAUUSD",
-    "signal": "SELL SCALP",
+    "signal": "WAIT",
     "direction": "sell",
     "bias": "bearish",
-    "entry": 3550,
-    "sl": 3563,
-    "tp1": 3537,
-    "tp2": 3527,
+    "entry": 3555,
+    "sl": 3571,
+    "tp1": 3539,
+    "tp2": 3523,
     "kind": "scalp",
-    "posted_at": "2026-11-20T18:16:00+02:00",
-    "telegram_msg_id": 105,
-    "result": "tp1",
-    "result_at": "2026-11-20T19:15:00+02:00",
-    "condition": "Live signal — posted to Telegram",
+    "posted_at": "2026-11-20T19:45:00+02:00",
+    "telegram_msg_id": 110,
+    "result": null,
+    "result_at": null,
+    "condition": "Conditional SELL on retest of 15M EMA21 at 3555",
     "last_signal_posted": {
       "signal": "SELL SCALP",
       "entry": 3550,
@@ -65,20 +65,20 @@
     "gold": {
       "signal": "WAIT",
       "direction": "sell",
-      "entry": 3559,
-      "sl": 3575,
-      "tp1": 3543,
-      "tp2": 3527,
-      "last_analysis": "2026-11-20T19:15:00+02:00"
+      "entry": 3555,
+      "sl": 3571,
+      "tp1": 3539,
+      "tp2": 3523,
+      "last_analysis": "2026-11-20T19:45:00+02:00"
     },
     "silver": {
       "signal": "WAIT",
       "direction": "sell",
-      "entry": 41.76,
-      "sl": 42.12,
-      "tp1": 41.4,
-      "tp2": 41.04,
-      "last_analysis": "2026-11-20T19:15:00+02:00"
+      "entry": 41.65,
+      "sl": 42.0,
+      "tp1": 41.3,
+      "tp2": 40.95,
+      "last_analysis": "2026-11-20T19:45:00+02:00"
     }
   },
   "history": [
@@ -92,8 +92,8 @@
       "sl": 3563,
       "tp1": 3537,
       "tp2": 3527,
-      "result": "tp1",
-      "result_at": "2026-11-20T19:15:00+02:00",
+      "result": "both",
+      "result_at": "2026-11-20T19:45:00+02:00",
       "telegram_msg_id": 105
     },
     {
