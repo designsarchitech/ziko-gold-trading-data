@@ -134,6 +134,10 @@
   </footer>
 </div>
 
+<!-- Firebase (web push only - skipped inside the Capacitor APK). -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 "use strict";
 var _sp = document.querySelector("#splash img"); if (_sp) { document.getElementById("headerLogo").src = _sp.src; }
@@ -514,8 +518,10 @@ alertsToggle.addEventListener("change", function () {
   if (alertsEnabled && typeof Notification !== "undefined" && Notification.permission === "default") {
     Notification.requestPermission().then(function (p) {
       document.getElementById("alertsDenied").style.display = p === "denied" ? "block" : "none";
+      if (p === "granted") { try { initWebPush(); } catch (e) {} }
     });
   }
+  if (alertsEnabled) { try { initWebPush(); } catch (e) {} }
   if (alertsEnabled && typeof Notification !== "undefined" && Notification.permission === "denied") {
     document.getElementById("alertsDenied").style.display = "block";
   }
@@ -572,6 +578,59 @@ setTimeout(function () {
     });
   } catch (e) {}
 })();
+// Web push notifications (browser only - skipped inside the Capacitor APK,
+// which has its own native token path). Firebase compat SDK via CDN.
+var __zgtWebPushTried = false;
+function initWebPush() {
+  try {
+    if (window.Capacitor) return; // APK: native push handles tokens.
+    if (typeof firebase === "undefined") return; // CDN blocked/unavailable.
+    if (!("serviceWorker" in navigator) || !("Notification" in window)) return;
+    if (Notification.permission !== "granted") return; // asked via the alerts toggle.
+    if (__zgtWebPushTried) return;
+    __zgtWebPushTried = true;
+    if (!firebase.apps || firebase.apps.length === 0) {
+      firebase.initializeApp({
+        apiKey: 'AIzaSyBQomFstf5XUY-emmI6QWBQra-VLUxxl8I',
+        authDomain: "ziko-gold-trading.firebaseapp.com",
+        projectId: "ziko-gold-trading",
+        messagingSenderId: "675109856609",
+        appId: "1:675109856609:web:54556b1896f8c3a513d120"
+      });
+    }
+    var messaging = firebase.messaging();
+    navigator.serviceWorker.register("firebase-messaging-sw.js").then(function (reg) {
+      return messaging.getToken({ vapidKey: "BGRg5hSVTqKxACgSMr0MCGvZWtF4DISUEsLuCHIFmB13smUmntTT_g5aQg4hBtUsLVkCPNSBJHkzhNmReObiRfM", serviceWorkerRegistration: reg });
+    }).then(function (token) {
+      if (!token) return;
+      try {
+        var last = null;
+        try { last = localStorage.getItem("zgt-fcm-web-token"); } catch (e) {}
+        if (last === token) return; // already stored for this token.
+        firebase.firestore().collection("fcm_tokens").doc(token).set({
+          token: token,
+          platform: "web",
+          created_at: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(function () {
+          try { localStorage.setItem("zgt-fcm-web-token", token); } catch (e) {}
+        }).catch(function () { /* create-only rules: token doc may already exist */ });
+      } catch (e) {}
+    }).catch(function () {});
+    try {
+      messaging.onMessage(function (payload) {
+        try {
+          var d = (payload && payload.data) || {};
+          if ((d.signal === "BUY" || d.signal === "SELL") && d.entry) {
+            var key = d.symbol === "XAGUSD" ? "silver" : "gold";
+            addAlert(key, { signal: d.signal, entry: d.entry });
+          }
+          refreshFeed();
+        } catch (e) {}
+      });
+    } catch (e) {}
+  } catch (e) {}
+}
+try { initWebPush(); } catch (e) {}
 </script>
 </body>
 </html>
