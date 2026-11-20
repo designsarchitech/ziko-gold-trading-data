@@ -443,12 +443,23 @@ function refreshFeed() {
     return false;
   });
 }
+function livePrice(metal) {
+  // Additional live-price channel: TradingView (unofficial scanner endpoint, no key)
+  // races alongside gold-api; first success wins per metal.
+  const goldApi = metal === "gold"
+    ? "https://api.gold-api.com/price/XAU"
+    : "https://api.gold-api.com/price/XAG";
+  const tv = metal === "gold"
+    ? "https://scanner.tradingview.com/symbol?symbol=OANDA:XAUUSD&fields=close"
+    : "https://scanner.tradingview.com/symbol?symbol=TVC:SILVER&fields=close";
+  return Promise.any([
+    fetchWithTimeout(goldApi, 12000).then(function (d) { return d && d.price; }),
+    fetchWithTimeout(tv, 12000).then(function (d) { return d && d.close; })
+  ]).catch(function () { return null; });
+}
 function refreshPrices() {
-  return Promise.all([
-    fetchWithTimeout("https://api.gold-api.com/price/XAU", 12000).catch(function () { return null; }),
-    fetchWithTimeout("https://api.gold-api.com/price/XAG", 12000).catch(function () { return null; })
-  ]).then(function (res) {
-    const g = res[0] && res[0].price, s = res[1] && res[1].price;
+  return Promise.all([livePrice("gold"), livePrice("silver")]).then(function (res) {
+    const g = res[0], s = res[1];
     if (g && s) {
       livePrices = true;
       if (!currentFeed.spot) currentFeed.spot = {};
