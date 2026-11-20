@@ -2,12 +2,12 @@
   "channel": "Ziko Gold Trading",
   "telegram": "https://t.me/zikogoldtrading",
   "facebook": "https://www.facebook.com/zikogoldtrading",
-  "updated_at": "2026-11-20T15:01:39+02:00",
-  "updated_at_utc": "2026-11-20T13:01:39Z",
+  "updated_at": "2026-11-20T16:11:38+02:00",
+  "updated_at_utc": "2026-11-20T14:11:38Z",
   "method": "Scalping H1 + 30M + 15M (15M timeframe, closed candles only)",
   "spot": {
-    "gold": 3575.649902,
-    "silver": 42.200001,
+    "gold": 3571.219971,
+    "silver": 41.919998,
     "currency": "USD",
     "source": "gold-api.com"
   },
@@ -16,12 +16,12 @@
     "signal": "WAIT",
     "direction": "sell",
     "bias": "bearish",
-    "entry": 3575,
-    "sl": 3586,
-    "tp1": 3564,
-    "tp2": 3553,
-    "condition": "Conditional SELL on retest of 15M EMA21 at 3575",
-    "last_analysis": "2026-11-20T15:00:00+02:00",
+    "entry": 3572,
+    "sl": 3583,
+    "tp1": 3561,
+    "tp2": 3550,
+    "condition": "Conditional SELL on retest of 15M EMA21 at 3572",
+    "last_analysis": "2026-11-20T16:00:00+02:00",
     "last_signal_posted": {
       "signal": "SELL SCALP",
       "entry": 3686,
@@ -37,12 +37,12 @@
     "signal": "WAIT",
     "direction": "sell",
     "bias": "bearish",
-    "entry": 42.26,
-    "sl": 42.62,
-    "tp1": 41.9,
-    "tp2": 41.54,
-    "condition": "Conditional SELL on retest of 15M EMA21 at 42.26",
-    "last_analysis": "2026-11-20T15:00:00+02:00",
+    "entry": 42.11,
+    "sl": 42.53,
+    "tp1": 41.69,
+    "tp2": 41.27,
+    "condition": "Conditional SELL on retest of 15M EMA21 at 42.11",
+    "last_analysis": "2026-11-20T16:00:00+02:00",
     "last_signal_posted": {
       "signal": "SELL SCALP",
       "entry": 42.19,
@@ -50,14 +50,10 @@
       "tp1": 41.8,
       "tp2": 41.57,
       "posted_at": "2026-11-20T14:15:00+02:00",
-      "result": "No result yet"
+      "result": "TP1 hit"
     }
   },
   "news": [
-    {
-      "time": "2026-11-20T15:25:00+02:00",
-      "text": "كلمة والر، عضو الفيدرالي الأمريكي"
-    },
     {
       "time": "2026-11-20T17:00:00+02:00",
       "text": "مؤشر ميشيغان لثقة المستهلك الأمريكي"
