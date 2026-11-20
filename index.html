@@ -850,6 +850,31 @@ if (alertsEnabled && typeof Notification !== "undefined" && Notification.permiss
 syncAlertsUI();
 syncTopAlertsUI();
 
+// Auto-prompt once on first web load: browsers forbid fully automatic push
+// subscription — the user must tap Allow on the system dialog once. The
+// closest to "on by default" is asking automatically, once, right after the
+// splash fades. Never re-asks (flag in localStorage); the top button stays as
+// the manual fallback. Skipped inside the Capacitor APK (native permission
+// flow there) and whenever a decision already exists.
+(function autoPromptAlertsOnce() {
+  try {
+    if (window.Capacitor) return;
+    if (typeof Notification === "undefined") return;
+    if (Notification.permission !== "default") return;
+    if (alertsEnabled) return;
+    try { if (localStorage.getItem("zgt-autoprompt") === "1") return; } catch (e) {}
+    setTimeout(function () {
+      try {
+        if (typeof Notification === "undefined") return;
+        if (Notification.permission !== "default") return;
+        if (alertsEnabled) return;
+        try { localStorage.setItem("zgt-autoprompt", "1"); } catch (e) {}
+        setAlertsEnabled(true);
+      } catch (e) {}
+    }, 3600);
+  } catch (e) {}
+})();
+
 applyLang();
 // First paint is the embedded snapshot: show the subtle "updating" state,
 // NOT the error banner, while the first live fetch is in flight. The error
