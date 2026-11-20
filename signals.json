@@ -2,12 +2,12 @@
   "channel": "Ziko Gold Trading",
   "telegram": "https://t.me/zikogoldtrading",
   "facebook": "https://www.facebook.com/zikogoldtrading",
-  "updated_at": "2026-11-20T19:12:48+02:00",
-  "updated_at_utc": "2026-11-20T17:12:48Z",
+  "updated_at": "2026-11-20T19:38:43+02:00",
+  "updated_at_utc": "2026-11-20T17:38:43Z",
   "method": "Scalping H1 + 30M + 15M (15M timeframe, closed candles only)",
   "spot": {
-    "gold": 3538.449951,
-    "silver": 41.23,
+    "gold": 3528.27002,
+    "silver": 40.974998,
     "currency": "USD",
     "source": "gold-api.com"
   },
@@ -23,8 +23,8 @@
     "kind": "scalp",
     "posted_at": "2026-11-20T18:16:00+02:00",
     "telegram_msg_id": 105,
-    "result": "open",
-    "result_at": null,
+    "result": "tp1",
+    "result_at": "2026-11-20T19:15:00+02:00",
     "condition": "Live signal — posted to Telegram",
     "last_signal_posted": {
       "signal": "SELL SCALP",
@@ -33,7 +33,7 @@
       "tp1": 3537,
       "tp2": 3527,
       "posted_at": "2026-11-20T18:16:00+02:00",
-      "result": "No result yet"
+      "result": "TP1 hit"
     }
   },
   "silver": {
@@ -65,20 +65,20 @@
     "gold": {
       "signal": "WAIT",
       "direction": "sell",
-      "entry": 3550,
-      "sl": 3563,
-      "tp1": 3537,
+      "entry": 3559,
+      "sl": 3575,
+      "tp1": 3543,
       "tp2": 3527,
-      "last_analysis": "2026-11-20T19:02:00+02:00"
+      "last_analysis": "2026-11-20T19:15:00+02:00"
     },
     "silver": {
       "signal": "WAIT",
       "direction": "sell",
-      "entry": 41.81,
-      "sl": 42.17,
-      "tp1": 41.45,
-      "tp2": 41.09,
-      "last_analysis": "2026-11-20T19:02:00+02:00"
+      "entry": 41.76,
+      "sl": 42.12,
+      "tp1": 41.4,
+      "tp2": 41.04,
+      "last_analysis": "2026-11-20T19:15:00+02:00"
     }
   },
   "history": [
@@ -92,8 +92,8 @@
       "sl": 3563,
       "tp1": 3537,
       "tp2": 3527,
-      "result": "open",
-      "result_at": null,
+      "result": "tp1",
+      "result_at": "2026-11-20T19:15:00+02:00",
       "telegram_msg_id": 105
     },
     {
@@ -102,8 +102,8 @@
       "id": "2026-11-20-1647-scalp-XAGUSD",
       "kind": "scalp",
       "posted_at": "2026-11-20T16:47:00+02:00",
-      "result": "tp1",
-      "result_at": "2026-11-20T17:32:00+02:00",
+      "result": "both",
+      "result_at": "2026-11-20T19:16:00+02:00",
       "sl": 42.37,
       "symbol": "XAGUSD",
       "telegram_msg_id": 100,
