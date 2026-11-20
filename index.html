@@ -520,7 +520,10 @@ syncAlertsUI();
 
 applyLang();
 setTimeout(refreshAll, 300);
-setInterval(refreshAll, 60000);
+// Signals feed polls every 30s so signal cards update promptly; live prices stay on 60s.
+setInterval(refreshFeed, 30000);
+setInterval(refreshPrices, 60000);
+setInterval(updateMarketPill, 60000);
 setTimeout(function () {
   const sp = document.getElementById("splash");
   if (sp) sp.classList.add("hide");
