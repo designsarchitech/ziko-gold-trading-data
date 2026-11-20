@@ -1,0 +1,67 @@
+{
+  "channel": "Ziko Gold Trading",
+  "telegram": "https://t.me/zikogoldtrading",
+  "facebook": "https://www.facebook.com/zikogoldtrading",
+  "updated_at": "2026-11-20T14:00:30+02:00",
+  "updated_at_utc": "2026-11-20T12:00:30Z",
+  "method": "Scalping H1 + 30M + 15M (15M timeframe, closed candles only)",
+  "spot": {
+    "gold": 3583.45,
+    "silver": 42.28,
+    "currency": "USD",
+    "source": "gold-api.com"
+  },
+  "gold": {
+    "symbol": "XAUUSD",
+    "signal": "WAIT",
+    "direction": "sell",
+    "bias": "bearish",
+    "entry": 3576,
+    "sl": 3588,
+    "tp1": 3564,
+    "tp2": 3552,
+    "condition": "Conditional SELL on retest of 15M EMA21 at 3576",
+    "last_analysis": "2026-11-20T13:45:00+02:00",
+    "last_signal_posted": {
+      "signal": "SELL SCALP",
+      "entry": 3686,
+      "sl": 3697,
+      "tp1": 3675,
+      "tp2": 3669,
+      "posted_at": "2026-11-19T20:02:00+02:00",
+      "result": "TP1 hit, TP2 hit later"
+    }
+  },
+  "silver": {
+    "symbol": "XAGUSD",
+    "signal": "WAIT",
+    "direction": "sell",
+    "bias": "bearish",
+    "entry": 42.30,
+    "sl": 42.72,
+    "tp1": 41.88,
+    "tp2": 41.46,
+    "condition": "Conditional SELL on retest of 15M EMA21 at 42.30",
+    "last_analysis": "2026-11-20T13:45:00+02:00",
+    "last_signal_posted": {
+      "signal": "SELL SCALP",
+      "entry": 44.41,
+      "sl": 44.71,
+      "tp1": 44.11,
+      "tp2": 43.81,
+      "posted_at": "2026-11-19T20:16:00+02:00",
+      "result": "TP1 hit, TP2 hit later"
+    }
+  },
+  "news": [
+    {
+      "time": "2026-11-20T15:25:00+02:00",
+      "text": "كلمة والر، عضو الفيدرالي الأمريكي"
+    },
+    {
+      "time": "2026-11-20T17:00:00+02:00",
+      "text": "مؤشر ميشيغان لثقة المستهلك الأمريكي"
+    }
+  ],
+  "disclaimer": "Educational analysis only, not financial advice."
+}
