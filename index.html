@@ -244,7 +244,7 @@ try { lang = localStorage.getItem("zgt-lang") || "ar"; } catch (e) { lang = "ar"
 if (lang !== "ar" && lang !== "en") lang = "ar";
 
 let currentFeed = SNAPSHOT_FEED;
-let livePrices = false;
+let livePriceAt = { gold: null, silver: null };
 let lastSeenSignals = {};
 try { lastSeenSignals = JSON.parse(localStorage.getItem("zgt-last-seen") || "{}"); } catch (e) { lastSeenSignals = {}; }
 
@@ -309,14 +309,17 @@ function resultText(r) {
   return r;
 }
 
+function priceNote(metal) {
+  if (livePriceAt[metal]) return t("lastPrice") + ": " + fmtTime(livePriceAt[metal]) + " - " + t("livePrice");
+  const stamp = currentFeed && currentFeed.updated_at ? fmtTime(currentFeed.updated_at) : "—";
+  return t("lastPrice") + ": " + stamp + " - " + t("fromSignals");
+}
 function renderPrices() {
   const spot = (currentFeed && currentFeed.spot) || {};
   document.getElementById("goldPrice").textContent = fmtPrice(spot.gold);
   document.getElementById("silverPrice").textContent = fmtPrice(spot.silver);
-  const stamp = currentFeed && currentFeed.updated_at ? fmtTime(currentFeed.updated_at) : "—";
-  const src = livePrices ? t("livePrice") : t("fromSignals");
-  document.getElementById("goldPriceNote").textContent = t("lastPrice") + ": " + stamp + " - " + src;
-  document.getElementById("silverPriceNote").textContent = t("lastPrice") + ": " + stamp + " - " + src;
+  document.getElementById("goldPriceNote").textContent = priceNote("gold");
+  document.getElementById("silverPriceNote").textContent = priceNote("silver");
 }
 
 function renderSignals() {
@@ -433,6 +436,7 @@ function refreshFeed() {
   ];
   return firstSuccess(sources).then(function (data) {
     currentFeed = data;
+    livePriceAt = { gold: null, silver: null };
     document.getElementById("staleBanner").style.display = "none";
     checkNewSignals(data);
     renderAll();
@@ -459,14 +463,20 @@ function livePrice(metal) {
 }
 function refreshPrices() {
   return Promise.all([livePrice("gold"), livePrice("silver")]).then(function (res) {
-    const g = res[0], s = res[1];
-    if (g && s) {
-      livePrices = true;
+    const now = new Date().toISOString();
+    if (res[0]) {
       if (!currentFeed.spot) currentFeed.spot = {};
-      currentFeed.spot.gold = g;
-      currentFeed.spot.silver = s;
+      currentFeed.spot.gold = res[0];
+      livePriceAt.gold = now;
     } else {
-      livePrices = false;
+      livePriceAt.gold = null;
+    }
+    if (res[1]) {
+      if (!currentFeed.spot) currentFeed.spot = {};
+      currentFeed.spot.silver = res[1];
+      livePriceAt.silver = now;
+    } else {
+      livePriceAt.silver = null;
     }
     renderPrices();
   });
