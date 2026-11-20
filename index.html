@@ -22,6 +22,9 @@
   .pill { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; background: #17171d; border: 1px solid #2c2c34; border-radius: 999px; padding: 10px 8px; font-size: 15px; font-weight: 700; cursor: pointer; color: #f2ede0; }
   .pill .dot { width: 9px; height: 9px; border-radius: 50%; background: #2fbf71; display: inline-block; }
   .pill .dot.closed { background: #e05252; }
+  .top-alert-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin: 16px 0 0; background: linear-gradient(180deg, #e8c15a, #c9a13b); color: #1a1405; border: none; border-radius: 14px; padding: 14px 16px; font-size: 17px; font-weight: 800; font-family: inherit; cursor: pointer; }
+  .top-alert-btn.on { background: #123d24; color: #5eead4; cursor: default; }
+  .top-alert-btn.denied { background: #17171d; border: 1px solid #2c2c34; color: #8d8778; cursor: default; font-size: 14px; font-weight: 700; line-height: 1.6; }
   #staleBanner { display: none; background: #3a1d1d; border: 1px solid #6b2f2f; color: #f3b8b8; border-radius: 12px; padding: 12px 14px; font-size: 14px; line-height: 1.6; margin-bottom: 14px; }
   #staleBanner.updating { background: #221d12; border: 1px solid #5a4d24; color: #d8c98a; }
   .prices { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
@@ -103,6 +106,8 @@
     </div>
     <button id="langBtn" type="button">EN</button>
   </header>
+
+  <button id="topAlertBtn" type="button" class="top-alert-btn">🔔 فعّل التنبيهات</button>
 
   <div class="pills">
     <button class="pill" id="refreshBtn" type="button"><span data-i18n="refresh"></span> <span aria-hidden="true">↻</span></button>
@@ -197,6 +202,7 @@ const T = {
     newsTitle: "أخبار الذهب",
     alertsTitle: "التنبيهات",
     alertsEnable: "تفعيل التنبيهات",
+    topAlertsEnable: "فعّل التنبيهات",
     alertsOn: "التنبيهات مفعّلة",
     alertsOff: "التنبيهات متوقفة",
     alertsEmpty: "لا توجد تنبيهات بعد — أي إشارة جديدة ستظهر هنا.",
@@ -266,6 +272,7 @@ const T = {
     newsTitle: "Gold news",
     alertsTitle: "Alerts",
     alertsEnable: "Enable alerts",
+    topAlertsEnable: "Enable notifications",
     alertsOn: "Alerts enabled",
     alertsOff: "Alerts off",
     alertsEmpty: "No alerts yet — any new signal will appear here.",
@@ -420,6 +427,7 @@ function applyLang() {
   try { localStorage.setItem("zgt-lang", lang); } catch (e) {}
   renderAll();
   updateMarketPill();
+  syncTopAlertsUI();
 }
 
 function biasText(bias) {
@@ -796,25 +804,51 @@ alertsToggle.checked = alertsEnabled;
 function syncAlertsUI() {
   document.getElementById("alertsState").textContent = alertsEnabled ? t("alertsOn") : t("alertsOff");
 }
-alertsToggle.addEventListener("change", function () {
-  alertsEnabled = alertsToggle.checked;
-  try { localStorage.setItem("zgt-alerts", alertsEnabled ? "1" : "0"); } catch (e) {}
+// Top-of-app notifications button: same enable flow as the bottom toggle,
+// surfaced right under the header so users can enable alerts without scrolling.
+function syncTopAlertsUI() {
+  var btn = document.getElementById("topAlertBtn");
+  if (!btn) return;
+  var denied = typeof Notification !== "undefined" && Notification.permission === "denied";
+  btn.classList.remove("on", "denied");
+  if (alertsEnabled && denied) {
+    btn.classList.add("denied");
+    btn.textContent = "🔕 " + t("alertsDenied");
+    btn.disabled = true;
+  } else if (alertsEnabled) {
+    btn.classList.add("on");
+    btn.textContent = "✅ " + t("alertsOn");
+    btn.disabled = true;
+  } else {
+    btn.textContent = "🔔 " + t("topAlertsEnable");
+    btn.disabled = false;
+  }
+}
+function setAlertsEnabled(on) {
+  alertsEnabled = on;
+  alertsToggle.checked = on;
+  try { localStorage.setItem("zgt-alerts", on ? "1" : "0"); } catch (e) {}
   syncAlertsUI();
-  if (alertsEnabled && typeof Notification !== "undefined" && Notification.permission === "default") {
+  syncTopAlertsUI();
+  if (on && typeof Notification !== "undefined" && Notification.permission === "default") {
     Notification.requestPermission().then(function (p) {
       document.getElementById("alertsDenied").style.display = p === "denied" ? "block" : "none";
       if (p === "granted") { try { initWebPush(); } catch (e) {} }
+      syncTopAlertsUI();
     });
   }
-  if (alertsEnabled) { try { initWebPush(); } catch (e) {} }
-  if (alertsEnabled && typeof Notification !== "undefined" && Notification.permission === "denied") {
+  if (on) { try { initWebPush(); } catch (e) {} }
+  if (on && typeof Notification !== "undefined" && Notification.permission === "denied") {
     document.getElementById("alertsDenied").style.display = "block";
   }
-});
+}
+alertsToggle.addEventListener("change", function () { setAlertsEnabled(alertsToggle.checked); });
+document.getElementById("topAlertBtn").addEventListener("click", function () { setAlertsEnabled(true); });
 if (alertsEnabled && typeof Notification !== "undefined" && Notification.permission === "denied") {
   document.getElementById("alertsDenied").style.display = "block";
 }
 syncAlertsUI();
+syncTopAlertsUI();
 
 applyLang();
 // First paint is the embedded snapshot: show the subtle "updating" state,
