@@ -428,6 +428,7 @@ function applyLang() {
   renderAll();
   updateMarketPill();
   syncTopAlertsUI();
+  syncAlertsUI();
 }
 
 function biasText(bias) {
@@ -802,7 +803,13 @@ let alertsEnabled = false;
 try { alertsEnabled = localStorage.getItem("zgt-alerts") === "1"; } catch (e) {}
 alertsToggle.checked = alertsEnabled;
 function syncAlertsUI() {
-  document.getElementById("alertsState").textContent = alertsEnabled ? t("alertsOn") : t("alertsOff");
+  var denied = typeof Notification !== "undefined" && Notification.permission === "denied";
+  var el = document.getElementById("alertsState");
+  if (alertsEnabled && denied) {
+    el.textContent = t("alertsDenied");
+  } else {
+    el.textContent = alertsEnabled ? t("alertsOn") : t("alertsOff");
+  }
 }
 // Top-of-app notifications button: same enable flow as the bottom toggle,
 // surfaced right under the header so users can enable alerts without scrolling.
@@ -835,6 +842,7 @@ function setAlertsEnabled(on) {
       document.getElementById("alertsDenied").style.display = p === "denied" ? "block" : "none";
       if (p === "granted") { try { initWebPush(); } catch (e) {} }
       syncTopAlertsUI();
+      syncAlertsUI();
     });
   }
   if (on) { try { initWebPush(); } catch (e) {} }
