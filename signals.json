@@ -2,8 +2,8 @@
   "channel": "Ziko Gold Trading",
   "telegram": "https://t.me/zikogoldtrading",
   "facebook": "https://www.facebook.com/zikogoldtrading",
-  "updated_at": "2026-11-21T04:32:34+02:00",
-  "updated_at_utc": "2026-11-21T02:32:38Z",
+  "updated_at": "2026-11-21T05:00:31+02:00",
+  "updated_at_utc": "2026-11-21T03:00:35Z",
   "method": "Scalping H1 + 30M + 15M (15M timeframe, closed candles only)",
   "spot": {
     "gold": 3539.0,
@@ -97,7 +97,8 @@
       "telegram_msg_id": 105,
       "tp1_points": 130,
       "tp2_points": 230,
-      "points": 360
+      "points": 360,
+      "sl_points": 0
     },
     {
       "direction": "SELL",
@@ -114,7 +115,8 @@
       "tp2": 41.11,
       "tp1_points": 42,
       "tp2_points": 84,
-      "points": 126
+      "points": 126,
+      "sl_points": 0
     },
     {
       "direction": "SELL",
@@ -131,7 +133,8 @@
       "tp2": 3541,
       "tp1_points": 140,
       "tp2_points": 280,
-      "points": 420
+      "points": 420,
+      "sl_points": 0
     },
     {
       "direction": "SELL",
@@ -148,7 +151,8 @@
       "tp2": 41.57,
       "tp1_points": 39,
       "tp2_points": 62,
-      "points": 101
+      "points": 101,
+      "sl_points": 0
     },
     {
       "direction": "SELL",
@@ -165,7 +169,8 @@
       "tp2": 43.81,
       "tp1_points": 30,
       "tp2_points": 60,
-      "points": 90
+      "points": 90,
+      "sl_points": 0
     },
     {
       "direction": "SELL",
@@ -182,7 +187,8 @@
       "tp2": 3669,
       "tp1_points": 110,
       "tp2_points": 170,
-      "points": 280
+      "points": 280,
+      "sl_points": 0
     },
     {
       "direction": "SELL",
@@ -199,7 +205,8 @@
       "tp2": 44.08,
       "tp1_points": 35,
       "tp2_points": 70,
-      "points": 105
+      "points": 105,
+      "sl_points": 0
     },
     {
       "direction": "SELL",
@@ -216,7 +223,8 @@
       "tp2": 3706,
       "tp1_points": 100,
       "tp2_points": 200,
-      "points": 300
+      "points": 300,
+      "sl_points": 0
     },
     {
       "direction": "SELL",
@@ -233,7 +241,8 @@
       "tp2": 44.47,
       "tp1_points": 30,
       "tp2_points": 60,
-      "points": 90
+      "points": 90,
+      "sl_points": 0
     },
     {
       "direction": "SELL",
@@ -250,7 +259,8 @@
       "tp2": 44.6,
       "tp1_points": 33,
       "tp2_points": 65,
-      "points": 98
+      "points": 98,
+      "sl_points": 0
     },
     {
       "direction": "SELL",
@@ -267,7 +277,8 @@
       "tp2": 3702,
       "tp1_points": 150,
       "tp2_points": 300,
-      "points": 450
+      "points": 450,
+      "sl_points": 0
     }
   ],
   "news": [
