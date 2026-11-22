@@ -12,9 +12,9 @@
   #splash { position: fixed; inset: 0; background: #0b0b0f; display: flex; align-items: center; justify-content: center; z-index: 100; transition: opacity .55s ease; }
   #splash.hide { opacity: 0; pointer-events: none; }
   #splash .splash-inner { display: flex; flex-direction: column; align-items: center; }
-  #splash .bull { width: 300px; height: 222px; object-fit: cover; object-position: top; border-radius: 24px; animation: bullOut 3s ease-out forwards; }
-  #splash .splash-name { font-family: Georgia, 'Times New Roman', serif; font-weight: 300; font-size: 52px; letter-spacing: .22em; color: #d4af37; margin-top: 12px; padding-left: .22em; animation: nameRise 3s ease-out .55s both; }
-  #splash .splash-sub { font-family: Georgia, 'Times New Roman', serif; font-size: 19px; letter-spacing: .42em; margin-top: 4px; padding-left: .42em; animation: subFade 3s ease-out 1.15s both; }
+  #splash .bull { width: 300px; height: 222px; object-fit: cover; object-position: top; border-radius: 24px; animation: bullOut 2.2s ease-out forwards; }
+  #splash .splash-name { font-family: Georgia, 'Times New Roman', serif; font-weight: 300; font-size: 52px; letter-spacing: .22em; color: #d4af37; margin-top: 12px; padding-left: .22em; animation: nameRise 2s ease-out .5s both; }
+  #splash .splash-sub { font-family: Georgia, 'Times New Roman', serif; font-size: 19px; letter-spacing: .42em; margin-top: 4px; padding-left: .42em; animation: subFade 1.2s ease-out 1.6s both; }
   @keyframes bullOut {
     0% { transform: scale(.55) translateY(30px); opacity: 0; }
     35% { opacity: 1; }
@@ -1046,11 +1046,11 @@ setInterval(updateMarketPill, 60000);
 setTimeout(function () {
   const sp = document.getElementById("splash");
   if (sp) sp.classList.add("hide");
-}, 3000);
+}, 4000);
 setTimeout(function () {
   const sp = document.getElementById("splash");
   if (sp && sp.parentNode) sp.parentNode.removeChild(sp);
-}, 3550);
+}, 4550);
 
 // Capacitor push notifications (APK only — no-op in the browser).
 // The native side (FcmTokenService) already captures the FCM token into
