@@ -831,13 +831,22 @@ function renderAll() {
 }
 
 // Market hours (same rule as the crons): Mon-Fri from 01:00 EET.
+// US gold-market holidays the crons also skip (step 0): New Year's Day
+// (Jan 1), Christmas Day (Dec 25) and Thanksgiving (4th Thursday of
+// November). Other US holidays are caught on the cron side by the
+// "no fresh closed candles" check; the app has no candle feed, so it
+// mirrors only the named dates.
 function isMarketOpen() {
   try {
     const now = new Date();
-    const parts = new Intl.DateTimeFormat("en-US", { timeZone: "Africa/Cairo", weekday: "short", hour: "numeric", hour12: false }).formatToParts(now);
-    let wd = "", h = 0;
-    parts.forEach(function (p) { if (p.type === "weekday") wd = p.value; if (p.type === "hour") h = parseInt(p.value, 10) % 24; });
-    return ["Mon", "Tue", "Wed", "Thu", "Fri"].indexOf(wd) >= 0 && h >= 1;
+    const parts = new Intl.DateTimeFormat("en-US", { timeZone: "Africa/Cairo", weekday: "short", month: "numeric", day: "numeric", hour: "numeric", hour12: false }).formatToParts(now);
+    let wd = "", mo = 0, dy = 0, h = 0;
+    parts.forEach(function (p) { if (p.type === "weekday") wd = p.value; if (p.type === "month") mo = parseInt(p.value, 10); if (p.type === "day") dy = parseInt(p.value, 10); if (p.type === "hour") h = parseInt(p.value, 10) % 24; });
+    if (["Mon", "Tue", "Wed", "Thu", "Fri"].indexOf(wd) < 0 || h < 1) return false;
+    if (mo === 1 && dy === 1) return false;      // New Year's Day
+    if (mo === 12 && dy === 25) return false;    // Christmas Day
+    if (mo === 11 && wd === "Thu" && dy >= 22 && dy <= 28) return false; // Thanksgiving (4th Thursday of November)
+    return true;
   } catch (e) { return false; }
 }
 function updateMarketPill() {
