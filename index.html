@@ -76,6 +76,7 @@
   .hist-item .h-res.sl { color: #ff7a7a; }
   .hist-item .h-points { margin-top: 2px; font-weight: 800; color: #5eead4; }
   .hist-item .h-points.loss { color: #ff7a7a; }
+  .hist-basis { font-size: 13px; color: #9a9aa3; margin: 6px 0 12px; line-height: 1.6; }
   .hist-total { background: #17171d; border: 1px solid #b8860b; border-radius: 12px; padding: 10px 14px; margin-bottom: 8px; font-size: 14px; line-height: 1.7; font-weight: 800; }
   .hist-total .metal-gold { color: #d4af37; }
   .hist-total .metal-silver { color: #c0c0c0; }
@@ -196,6 +197,8 @@ const T = {
     silver: "🥈 الفضة",
     lastPrice: "آخر سعر",
     livePrice: "سعر مباشر",
+    lastAvailablePrice: "آخر سعر متاح",
+    priceSourceAt: "المصدر",
     entrySignals: "إشارات الدخول",
     lastUpdate: "آخر تحديث",
     wait: "🟡 انتظار",
@@ -239,6 +242,7 @@ const T = {
     histPointsLost: "🔻 خسر",
     histPointsUnit: "نقطة",
     histTotalPoints: "إجمالي نقاط الأسبوع",
+    pointsBasis: "الإجمالي = مسافة كل توصية من الدخول لأبعد هدف وصلت له — النقطة = 0.10$ للذهب، 0.01$ للفضة",
     bearish: "🔻 هابط",
     bullish: "🔺 صاعد",
     sideways: "➡️ عرضي",
@@ -272,6 +276,8 @@ const T = {
     silver: "🥈 Silver",
     lastPrice: "Last price",
     livePrice: "live price",
+    lastAvailablePrice: "Last available price",
+    priceSourceAt: "Source",
     entrySignals: "Entry signals",
     lastUpdate: "Last update",
     wait: "🟡 WAIT",
@@ -315,6 +321,7 @@ const T = {
     histPointsLost: "🔻 Lost",
     histPointsUnit: "points",
     histTotalPoints: "Total points this week",
+    pointsBasis: "Total = each signal's distance from entry to its furthest target reached — 1 point = $0.10 gold, $0.01 silver",
     bearish: "🔻 Bearish",
     bullish: "🔺 Bullish",
     sideways: "➡️ Sideways",
@@ -354,6 +361,7 @@ let currentFeed = SNAPSHOT_FEED;
 // on screen; before any successful live fetch the price shows "—".
 let livePrices = { gold: null, silver: null };
 let livePriceAt = { gold: null, silver: null };
+let livePriceSourceAt = { gold: null, silver: null }; // gold-api updatedAt per metal; null when the channel has no source time
 // Market summary: day stats (open/high/low/change%) come from TradingView,
 // the app's existing second price channel — gold-api /price has no OHLC
 // fields, only price + updatedAt. Fetched on the 60s price cadence.
@@ -504,10 +512,17 @@ function resultBadge(r) {
 }
 
 function priceNote(metal) {
-  // "آخر سعر" is always a real live-fetch time. No fallback to the feed's
-  // updated_at and no "from signals data" label anymore.
-  if (livePriceAt[metal]) return t("lastPrice") + ": " + fmtTime(livePriceAt[metal]) + " - " + t("livePrice");
-  return t("lastPrice") + ": —";
+  // "آخر سعر" is always a real live-fetch time (date + time). No fallback
+  // to the feed's updated_at and no "from signals data" label anymore.
+  // When the market is closed the label is "آخر سعر متاح", not "سعر مباشر".
+  // The fetch time and the price's time at its source are shown separately
+  // when the source time is available (gold-api's updatedAt; TradingView
+  // close has none).
+  if (!livePriceAt[metal]) return t("lastPrice") + ": —";
+  const label = isMarketOpen() ? t("livePrice") : t("lastAvailablePrice");
+  let s = t("lastPrice") + ": " + fmtDateTime(livePriceAt[metal]) + " - " + label;
+  if (livePriceSourceAt[metal]) s += " · " + t("priceSourceAt") + ": " + fmtDateTime(livePriceSourceAt[metal]);
+  return s;
 }
 function renderPrices() {
   document.getElementById("goldPrice").textContent = fmtPrice(livePrices.gold);
@@ -522,7 +537,7 @@ function renderSignals() {
     box.innerHTML = '<div class="empty">' + esc(t("noData")) + "</div>";
     return;
   }
-  document.getElementById("lastUpdate").textContent = fmtTime(currentFeed.updated_at);
+  document.getElementById("lastUpdate").textContent = fmtDateTime(currentFeed.updated_at);
   const rows = [["gold", t("gold"), "XAU/USD"], ["silver", t("silver"), "XAG/USD"]];
   let html = "";
   rows.forEach(function (row) {
@@ -538,7 +553,7 @@ function renderSignals() {
     // analysis recomputations.
     let posted = "";
     if (d.posted_at) {
-      posted = "<div class=\"last-posted\"><div>" + esc(t("postedAtTime")) + " " + esc(fmtTime(d.posted_at)) + "</div>";
+      posted = "<div class=\"last-posted\"><div>" + esc(t("postedAtTime")) + " " + esc(fmtDateTime(d.posted_at)) + "</div>";
       if (d.result) {
         posted += "<div><b>" + esc(t("result")) + ":</b> " + esc(resultBadge(d.result)) + "</div>";
       }
@@ -575,17 +590,20 @@ function renderNews() {
 }
 
 // Points per signal, in pip scale labelled "نقطة" (gold 1 = $0.10, silver 1 = $0.01).
-// Prefer the feed's server-computed value; fall back to computing from the
-// entry/targets so older cached feeds still show points.
+// Review method (approved 22 Nov 2026): each signal contributes ONLY its
+// distance from entry to the FURTHEST target reached — "both" counts the TP2
+// distance only (never TP1+TP2 summed), "tp1" the TP1 distance, "sl" the
+// stop-loss distance as a negative number. Prefer the feed's server-computed
+// value; fall back to computing from the entry/targets so older cached feeds
+// still show points.
 function histPoints(e) {
   if (typeof e.points === "number") return e.points;
   const pip = e.symbol === "XAGUSD" ? 0.01 : 0.10;
   if (typeof e.entry !== "number" || typeof e.tp1 !== "number" || typeof e.tp2 !== "number") return 0;
   if (e.result === "sl" && typeof e.sl === "number") return -Math.round(Math.abs(e.entry - e.sl) / pip);
-  let p = 0;
-  if (e.result === "tp1" || e.result === "both") p += Math.round(Math.abs(e.entry - e.tp1) / pip);
-  if (e.result === "both") p += Math.round(Math.abs(e.entry - e.tp2) / pip);
-  return p;
+  if (e.result === "both") return Math.round(Math.abs(e.entry - e.tp2) / pip);
+  if (e.result === "tp1") return Math.round(Math.abs(e.entry - e.tp1) / pip);
+  return 0;
 }
 
 function renderHistory() {
@@ -608,6 +626,7 @@ function renderHistory() {
     total = '<div class="hist-total">' + esc(t("histTotalPoints")) + ":<br>" +
       '<span class="metal-gold">' + esc(t("gold")) + "</span> " + ptsSpan(goldPts) + " " + esc(t("histPointsUnit")) + "<br>" +
       '<span class="metal-silver">' + esc(t("silver")) + "</span> " + ptsSpan(silverPts) + " " + esc(t("histPointsUnit")) + "</div>";
+    total += '<div class="hist-basis">' + esc(t("pointsBasis")) + "</div>";
   }
   box.innerHTML = total + hist.map(function (e) {
     const metal = e.symbol === "XAGUSD" ? t("silver") : t("gold");
@@ -618,7 +637,7 @@ function renderHistory() {
     else if (e.result === "tp1") { badgeCls = "tp1"; badgeTxt = t("histTp1"); }
     else if (e.result === "sl") { badgeCls = "sl"; badgeTxt = t("histSl"); }
     let res = '<div class="h-res ' + badgeCls + '">' + esc(badgeTxt) + "</div>";
-    if (e.result_at) res = '<div class="h-res ' + badgeCls + '">' + esc(badgeTxt) + " — " + esc(t("histResultAt")) + " " + esc(fmtTime(e.result_at)) + "</div>";
+    if (e.result_at) res = '<div class="h-res ' + badgeCls + '">' + esc(badgeTxt) + " — " + esc(t("histResultAt")) + " " + esc(fmtDateTime(e.result_at)) + "</div>";
     let ptsLine = "";
     const pts = histPoints(e);
     if (pts > 0) ptsLine = '<div class="h-points">' + esc(t("histPoints")) + " <b>" + pts.toLocaleString("en-US") + "</b> " + esc(t("histPointsUnit")) + "</div>";
@@ -699,13 +718,19 @@ function renderAll() {
   renderNews();
 }
 
-function updateMarketPill() {
+// Market hours (same rule as the crons): Mon-Fri from 01:00 EET.
+function isMarketOpen() {
   try {
     const now = new Date();
     const parts = new Intl.DateTimeFormat("en-US", { timeZone: "Africa/Cairo", weekday: "short", hour: "numeric", hour12: false }).formatToParts(now);
     let wd = "", h = 0;
     parts.forEach(function (p) { if (p.type === "weekday") wd = p.value; if (p.type === "hour") h = parseInt(p.value, 10) % 24; });
-    const open = ["Mon", "Tue", "Wed", "Thu", "Fri"].indexOf(wd) >= 0 && h >= 1;
+    return ["Mon", "Tue", "Wed", "Thu", "Fri"].indexOf(wd) >= 0 && h >= 1;
+  } catch (e) { return false; }
+}
+function updateMarketPill() {
+  try {
+    const open = isMarketOpen();
     document.getElementById("marketPill").textContent = open ? t("marketOpen") : t("marketClosed");
     document.getElementById("marketDot").className = "dot" + (open ? "" : " closed");
   } catch (e) {}
@@ -795,10 +820,13 @@ function refreshFeed() {
 // null, refreshPrices keeps the last live price and its real fetch time.
 // The old race between gold-api and TradingView made the price jump between
 // spot and the OANDA close (dollars apart) on every refresh.
+// Returns { price, sourceAt } — sourceAt is the price's timestamp at its
+// source (gold-api's updatedAt) when available, null otherwise (TradingView
+// close has no timestamp). Callers keep the fetch time separately.
 function priceFromPayload(d) {
   if (!d) return null;
-  if (typeof d.price === "number") return d.price;
-  if (typeof d.close === "number") return d.close;
+  if (typeof d.price === "number") return { price: d.price, sourceAt: (typeof d.updatedAt === "string" ? d.updatedAt : null) };
+  if (typeof d.close === "number") return { price: d.close, sourceAt: null };
   // allorigins wraps the upstream JSON as a string in .contents
   if (typeof d.contents === "string") {
     try { return priceFromPayload(JSON.parse(d.contents)); } catch (e) { return null; }
@@ -852,8 +880,8 @@ function refreshPrices() {
     // Live success: store the price + its real fetch time. Live failure:
     // keep the last live price and its time untouched — never fall back to
     // the signals feed's spot or updated_at, never clear the timestamp.
-    if (res[0]) { livePrices.gold = res[0]; livePriceAt.gold = now; }
-    if (res[1]) { livePrices.silver = res[1]; livePriceAt.silver = now; }
+    if (res[0]) { livePrices.gold = res[0].price; livePriceAt.gold = now; livePriceSourceAt.gold = res[0].sourceAt || null; }
+    if (res[1]) { livePrices.silver = res[1].price; livePriceAt.silver = now; livePriceSourceAt.silver = res[1].sourceAt || null; }
     renderPrices();
     renderSummary();
   });
