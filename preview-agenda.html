@@ -1158,11 +1158,11 @@ applyLang();
 // live update for ~15s, or displayed data older than ~10 minutes).
 showUpdating();
 setTimeout(evaluateStale, STALE_GRACE_MS);
-/* preview: live refresh disabled — snapshot only */
+/* preview: initial refresh disabled — snapshot only */
 // Signals feed polls every 30s so signal cards update promptly; live prices stay on 60s.
-setInterval(refreshFeed, 30000);
-setInterval(refreshPrices, 60000);
-setInterval(updateMarketPill, 60000);
+/* preview: feed poll disabled — snapshot only */
+/* preview: price poll disabled — snapshot only */
+/* preview: market-pill poll disabled */
 setTimeout(function () {
   const sp = document.getElementById("splash");
   if (sp) sp.classList.add("hide");
