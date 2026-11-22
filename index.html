@@ -246,6 +246,8 @@ const T = {
     postedAtTime: "نُشرت الساعة",
     condSell: "بيع مشروط عند إعادة اختبار متوسط 15 دقيقة عند",
     condBuy: "شراء مشروط عند إعادة اختبار متوسط 15 دقيقة عند",
+    watchLevel: "مستوى تحت المراقبة",
+    noEntry: "مفيش دخول دلوقتي",
     activeSignal: "إشارة دخول فعالة",
     newSignal: "إشارة جديدة",
     tp1Hit: "تحقق الهدف الأول",
@@ -320,6 +322,8 @@ const T = {
     postedAtTime: "Posted at",
     condSell: "Conditional SELL on retest of 15M EMA21 at",
     condBuy: "Conditional BUY on retest of 15M EMA21 at",
+    watchLevel: "Watch level",
+    noEntry: "No entry",
     activeSignal: "Active entry signal",
     newSignal: "New signal",
     tp1Hit: "TP1 hit",
@@ -526,7 +530,7 @@ function renderSignals() {
     const d = currentFeed[key];
     const isWait = String(d.signal || "").toUpperCase() === "WAIT";
     const cond = isWait
-      ? "<div class=\"cond\">" + esc(d.direction === "buy" ? t("condBuy") : t("condSell")) + " " + esc(d.entry) + "</div>"
+      ? "<div class=\"cond\">" + esc(t("watchLevel")) + (typeof d.entry === "number" ? " " + esc(d.entry) : "") + " — " + esc(t("noEntry")) + "</div>"
       : "<div class=\"cond\">" + esc(t("activeSignal")) + "</div>";
     // Single source of truth: the card shows the LAST POSTED signal on the
     // Telegram channel only (d.posted_at = when that post went out). The
@@ -544,12 +548,13 @@ function renderSignals() {
       " <span style=\"color:#8d8778;font-size:13px;font-weight:400\">" + sym + "</span></span>" +
       "<span class=\"state-ico\">" + stateIcon(d.signal) + "</span>" + "<span class=\"badge " + signalClass(d.signal) + "\">" + esc(signalLabel(d.signal)) + "</span></div>" +
       "<div class=\"bias\">" + esc(biasText(d.bias)) + "</div>" +
+      (isWait ? "" :
       "<div class=\"nums\">" +
       "<div class=\"cell\"><div class=\"lbl\">" + esc(t("entry")) + "</div><div class=\"v\">" + esc(d.entry) + "</div></div>" +
       "<div class=\"cell\"><div class=\"lbl\">" + esc(t("stopLoss")) + "</div><div class=\"v\">" + esc(d.sl) + "</div></div>" +
       "<div class=\"cell\"><div class=\"lbl\">" + esc(t("tp1")) + "</div><div class=\"v\">" + esc(d.tp1) + "</div></div>" +
       "<div class=\"cell\"><div class=\"lbl\">" + esc(t("tp2")) + "</div><div class=\"v\">" + esc(d.tp2) + "</div></div>" +
-      "</div>" + cond + posted + "</div>";
+      "</div>") + cond + posted + "</div>";
   });
   box.innerHTML = html;
 }
