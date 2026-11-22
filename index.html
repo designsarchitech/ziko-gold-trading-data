@@ -404,7 +404,7 @@ let currentFeed = SNAPSHOT_FEED;
 // on screen; before any successful live fetch the price shows "—".
 let livePrices = { gold: null, silver: null };
 let livePriceAt = { gold: null, silver: null };
-let livePriceSourceAt = { gold: null, silver: null }; // gold-api updatedAt per metal; null when the channel has no source time
+let livePriceSource = { gold: null, silver: null }; // winning price channel name per metal ("TradingView" / "gold-api") — shown in the price note, never a timestamp
 // Market summary: day stats (open/high/low/change%) come from TradingView,
 // the app's existing second price channel — gold-api /price has no OHLC
 // fields, only price + updatedAt. Fetched on the 60s price cadence.
@@ -558,13 +558,13 @@ function priceNote(metal) {
   // "آخر سعر" is always a real live-fetch time (date + time). No fallback
   // to the feed's updated_at and no "from signals data" label anymore.
   // When the market is closed the label is "آخر سعر متاح", not "سعر مباشر".
-  // The fetch time and the price's time at its source are shown separately
-  // when the source time is available (gold-api's updatedAt; TradingView
-  // close has none).
+  // The source slot shows the winning channel's NAME ("TradingView" /
+  // "gold-api"), never a date — the fetch time above already says when the
+  // price was fetched (fix 23 Nov 2026: the note showed a timestamp there).
   if (!livePriceAt[metal]) return t("lastPrice") + ": —";
   const label = isMarketOpen() ? t("livePrice") : t("lastAvailablePrice");
   let s = t("lastPrice") + ": " + fmtDateTime(livePriceAt[metal]) + " - " + label;
-  if (livePriceSourceAt[metal]) s += " · " + t("priceSourceAt") + ": " + fmtDateTime(livePriceSourceAt[metal]);
+  if (livePriceSource[metal]) s += " · " + t("priceSourceAt") + ": " + livePriceSource[metal];
   return s;
 }
 function renderPrices() {
@@ -982,12 +982,13 @@ function refreshFeed() {
     return false;
   });
 }
-// Stability: prices use SEQUENTIAL fallback only — gold-api first, then
-// TradingView, then CORS proxies. NO feed-spot fallback: live prices never
-// come from signals.json (per Ziko, 20 Nov 2026). When livePrice() returns
-// null, refreshPrices keeps the last live price and its real fetch time.
-// The old race between gold-api and TradingView made the price jump between
-// spot and the OANDA close (dollars apart) on every refresh.
+// Stability: livePrice() fetches gold-api AND TradingView in parallel and
+// cross-checks them (price guard, 23 Nov 2026) — the old race made the
+// price jump between spot and the OANDA close on every refresh, and
+// gold-api alone published a wrong $3603.45 gold price at the 23 Nov
+// market open. NO feed-spot fallback: live prices never come from
+// signals.json (per Ziko, 20 Nov 2026). When livePrice() returns null,
+// refreshPrices keeps the last live price and its real fetch time.
 // Returns { price, sourceAt } — sourceAt is the price's timestamp at its
 // source (gold-api's updatedAt) when available, null otherwise (TradingView
 // close has no timestamp). Callers keep the fetch time separately.
@@ -1004,28 +1005,59 @@ function priceFromPayload(d) {
 function tryPrice(url) {
   return fetchWithTimeout(url, 12000).then(priceFromPayload).catch(function () { return null; });
 }
+// PRICE GUARD (23 Nov 2026 — gold-api alone published a wrong $3603.45
+// gold price at the Monday market open; gold never printed 3603 that day):
+// the live price is fetched from BOTH channels in parallel (gold-api and
+// the TradingView scanner) and cross-checked. If both succeed and they
+// disagree by more than the tolerance ($5 gold / $0.10 silver), the
+// TradingView price wins — it agreed with Twelve Data all morning while
+// gold-api's XAU feed went wild. If both agree, gold-api wins (it carries
+// an updatedAt timestamp). If only one succeeds, that one is used. If both
+// direct fetches fail, the CORS proxies are tried — TradingView first, then
+// gold-api — and the winning channel's name is returned as `source`
+// ("TradingView" / "gold-api") so the price note can show it.
+// The $0.10 silver tolerance is the app's own pick rule (a disagreement
+// only flips the choice to TradingView, never fails the price); the
+// check_price.py guard that can FAIL a signal uses $0.25 for silver
+// because gold-api XAG tracks COMEX futures, not spot.
 function livePrice(metal) {
   const sym = metal === "gold" ? "XAU" : "XAG";
   const goldApi = "https://api.gold-api.com/price/" + sym;
   const tv = metal === "gold"
     ? "https://scanner.tradingview.com/symbol?symbol=OANDA:XAUUSD&fields=close"
     : "https://scanner.tradingview.com/symbol?symbol=TVC:SILVER&fields=close";
-  const proxies = [
-    "https://api.allorigins.win/get?url=" + encodeURIComponent(goldApi),
-    "https://corsproxy.io/?url=" + encodeURIComponent(goldApi),
-    "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(goldApi)
-  ];
-  return tryPrice(goldApi).then(function (p) {
-    if (p) return p;
-    return tryPrice(tv);
-  }).then(function (p) {
-    if (p) return p;
-    // CORS proxies, one after another.
+  const tol = metal === "gold" ? 5 : 0.10;
+  const proxyFor = function (url) {
+    return [
+      "https://api.allorigins.win/get?url=" + encodeURIComponent(url),
+      "https://corsproxy.io/?url=" + encodeURIComponent(url),
+      "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(url)
+    ];
+  };
+  function tryChain(urls) {
     let chain = Promise.resolve(null);
-    proxies.forEach(function (u) {
+    urls.forEach(function (u) {
       chain = chain.then(function (prev) { return prev || tryPrice(u); });
     });
     return chain;
+  }
+  return Promise.all([tryPrice(goldApi), tryPrice(tv)]).then(function (res) {
+    const ga = res[0], tvp = res[1];
+    if (ga && tvp) {
+      if (Math.abs(ga.price - tvp.price) <= tol) { ga.source = "gold-api"; return ga; }
+      tvp.source = "TradingView"; // disagreement: trust TradingView
+      return tvp;
+    }
+    if (ga) { ga.source = "gold-api"; return ga; }
+    if (tvp) { tvp.source = "TradingView"; return tvp; }
+    // Both direct channels failed: CORS proxies, TradingView first.
+    return tryChain(proxyFor(tv)).then(function (p) {
+      if (p) { p.source = "TradingView"; return p; }
+      return tryChain(proxyFor(goldApi)).then(function (q) {
+        if (q) { q.source = "gold-api"; return q; }
+        return null;
+      });
+    });
   }).catch(function () { return null; });
 }
 function fetchDayStats(metal) {
@@ -1048,8 +1080,8 @@ function refreshPrices() {
     // Live success: store the price + its real fetch time. Live failure:
     // keep the last live price and its time untouched — never fall back to
     // the signals feed's spot or updated_at, never clear the timestamp.
-    if (res[0]) { livePrices.gold = res[0].price; livePriceAt.gold = now; livePriceSourceAt.gold = res[0].sourceAt || null; }
-    if (res[1]) { livePrices.silver = res[1].price; livePriceAt.silver = now; livePriceSourceAt.silver = res[1].sourceAt || null; }
+    if (res[0]) { livePrices.gold = res[0].price; livePriceAt.gold = now; livePriceSource.gold = res[0].source || null; }
+    if (res[1]) { livePrices.silver = res[1].price; livePriceAt.silver = now; livePriceSource.silver = res[1].source || null; }
     renderPrices();
     renderSummary();
   });
