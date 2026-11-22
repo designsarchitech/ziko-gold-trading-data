@@ -79,6 +79,7 @@
   .track.up { color: #5eead4; }
   .track.down { color: #ff7a7a; }
   .track.flat { color: #8d8778; }
+  .track .locked { color: #5eead4; }
   .bias { color: #b8b0a0; font-size: 14px; margin: 8px 0 12px; }
   .nums { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; }
   .nums .cell { background: #101014; border-radius: 10px; padding: 9px 11px; }
@@ -270,6 +271,7 @@ const T = {
     histPointsUnit: "نقطة",
     liveResult: "النتيجة حتى الآن",
     finalResult: "النتيجة النهائية",
+    lockedResult: "المحقق",
     histTotalPoints: "إجمالي نقاط الأسبوع",
     pointsBasis: "الإجمالي = مسافة كل توصية من الدخول لأبعد هدف وصلت له — النقطة = 0.10$ للذهب، 0.01$ للفضة",
     bearish: "🔻 هابط",
@@ -351,6 +353,7 @@ const T = {
     histPointsUnit: "points",
     liveResult: "Result so far",
     finalResult: "Final result",
+    lockedResult: "Locked in",
     histTotalPoints: "Total points this week",
     pointsBasis: "Total = each signal's distance from entry to its furthest target reached — 1 point = $0.10 gold, $0.01 silver",
     bearish: "🔻 Bearish",
@@ -572,7 +575,7 @@ function trackHtml(d) {
   const pip = d.symbol === "XAUUSD" ? 0.10 : 0.01;
   const entry = Number(d.entry);
   if (!isFinite(entry)) return "";
-  let pts = null, final = false;
+  let pts = null, final = false, locked = null;
   if (d.result === "both") {
     const tp2 = Number(d.tp2);
     if (!isFinite(tp2)) return "";
@@ -587,12 +590,21 @@ function trackHtml(d) {
     if (typeof live !== "number" || !isFinite(live)) return "";
     const dir = String(d.direction || "").toLowerCase();
     pts = Math.round((dir === "sell" ? entry - live : live - entry) / pip);
+    // TP1 already hit: the TP1 points are locked in — show them as a floor
+    // beside the floating number, so the moving number is never read as
+    // the final result (e.g. floating +50 after a pullback, locked +130).
+    if (d.result === "tp1") {
+      const tp1 = Number(d.tp1);
+      if (isFinite(tp1)) locked = Math.round(Math.abs(entry - tp1) / pip);
+    }
   }
   const cls = pts > 0 ? "up" : pts < 0 ? "down" : "flat";
   const sign = pts > 0 ? "+" : "";
   const ico = pts > 0 ? "💰" : pts < 0 ? "🔻" : "➖";
   const label = final ? t("finalResult") : t("liveResult");
-  return "<div class=\"track " + cls + "\">" + ico + " " + esc(label) + ": " + sign + pts + " " + esc(t("histPointsUnit")) + "</div>";
+  const lockedHtml = locked === null ? "" :
+    " <span class=\"locked\">• ✅ " + esc(t("lockedResult")) + ": +" + locked + " " + esc(t("histPointsUnit")) + "</span>";
+  return "<div class=\"track " + cls + "\">" + ico + " " + esc(label) + ": " + sign + pts + " " + esc(t("histPointsUnit")) + lockedHtml + "</div>";
 }
 function renderSignals() {
   const box = document.getElementById("signalCards");
