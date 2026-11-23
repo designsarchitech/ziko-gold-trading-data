@@ -2,12 +2,12 @@
   "channel": "Ziko Gold Trading",
   "telegram": "https://t.me/zikogoldtrading",
   "facebook": "https://www.facebook.com/zikogoldtrading",
-  "updated_at": "2026-11-23T13:59:49+02:00",
-  "updated_at_utc": "2026-11-23T11:59:51Z",
+  "updated_at": "2026-11-23T15:13:52+02:00",
+  "updated_at_utc": "2026-11-23T13:13:54Z",
   "method": "Scalping H1 + 30M + 15M (15M timeframe, closed candles only)",
   "spot": {
-    "gold": 3619.949951,
-    "silver": 42.375,
+    "gold": 3619.300049,
+    "silver": 42.237999,
     "currency": "USD",
     "source": "gold-api.com"
   },
@@ -21,8 +21,8 @@
     "tp1": null,
     "tp2": null,
     "kind": "scalp",
-    "posted_at": "2026-11-23T13:31:00+02:00",
-    "telegram_msg_id": 143,
+    "posted_at": "2026-11-23T14:44:00+02:00",
+    "telegram_msg_id": 145,
     "result": null,
     "result_at": null,
     "condition": "Monitoring level 3617 — no entry",
@@ -46,8 +46,8 @@
     "tp1": null,
     "tp2": null,
     "kind": "scalp",
-    "posted_at": "2026-11-23T13:31:00+02:00",
-    "telegram_msg_id": 144,
+    "posted_at": "2026-11-23T14:44:00+02:00",
+    "telegram_msg_id": 146,
     "result": null,
     "result_at": null,
     "condition": "Monitoring level 42.78 — no entry",
@@ -72,8 +72,8 @@
       "tp1": null,
       "tp2": null,
       "kind": "scalp",
-      "posted_at": "2026-11-23T13:31:00+02:00",
-      "telegram_msg_id": 143,
+      "posted_at": "2026-11-23T14:44:00+02:00",
+      "telegram_msg_id": 145,
       "result": null,
       "result_at": null,
       "condition": "Monitoring level 3617 — no entry",
@@ -97,8 +97,8 @@
       "tp1": null,
       "tp2": null,
       "kind": "scalp",
-      "posted_at": "2026-11-23T13:31:00+02:00",
-      "telegram_msg_id": 144,
+      "posted_at": "2026-11-23T14:44:00+02:00",
+      "telegram_msg_id": 146,
       "result": null,
       "result_at": null,
       "condition": "Monitoring level 42.78 — no entry",
@@ -121,16 +121,16 @@
       "sl": null,
       "tp1": null,
       "tp2": null,
-      "last_analysis": "2026-11-23T14:00:00+02:00"
+      "last_analysis": "2026-11-23T15:00:00+02:00"
     },
     "silver": {
       "signal": "WAIT",
       "direction": "bearish",
-      "entry": 42.78,
+      "entry": 42.34,
       "sl": null,
       "tp1": null,
       "tp2": null,
-      "last_analysis": "2026-11-23T14:00:00+02:00"
+      "last_analysis": "2026-11-23T15:00:00+02:00"
     }
   },
   "history": [
@@ -335,6 +335,18 @@
   ],
   "news": [
     {
+      "time": "2026-11-23T15:05:06+02:00",
+      "text": "🟡 غولدمان ساكس: ضغوط هبوطية على الذهب.. لكن الانعكاس قادم 💰 تتوقع غولدمان ساكس أن تنعكس الضغوط الهبوطية على أسعار الذهب في نهاية المطاف، إلا أن هذا الانعكاس قد يكون بطيئًا وتدريجيًا مع اقتراب نهاية العام. ⬤ قناة أَخبار الفوركس العاجلة 🌎 Telegram.me/ForexBreakingNews ✅",
+      "source": "ForexBreakingNews",
+      "url": "https://t.me/ForexBreakingNews/44140"
+    },
+    {
+      "time": "2026-11-23T14:50:05+02:00",
+      "text": "🔴 هام 🔺 تراجع الدولار امام الذهب والعملات. ⬅️ لكن لا يمكن ان نصنف ذلك بتغير الاتجاه، انما يمكن اعتبار ذلك استراحة وجني ارباح بعد موجة صعود قوية لدولار. 🔺 توقعات رفع الفائدة في سبتمبر لا زالت موجودة، لكن تراجعت التوقعات التي تتحدث عن رفع 50% حالياً. ⬅️ بشكل عام لا يمكن الجزم انه رحلة ارتفاع…",
+      "source": "QUICKECONEWS",
+      "url": "https://t.me/QUICKECONEWS/16089"
+    },
+    {
       "time": "2026-11-23T11:10:27+02:00",
       "text": "🔵 ارتفعت أسعار الذهب مع موازنة المستثمرين بين موجة التراجع الحادة في أسهم شركات التكنولوجيا وترقب بيانات التضخم الأمريكية، بحثًا عن مؤشرات جديدة بشأن مسار أسعار الفائدة. S",
       "source": "QUICKECONEWS",
@@ -351,12 +363,6 @@
       "text": "🔵 إليكم أبرز التطورات الحاصلة 🔷 ارتداد للذهب والفضة.. والحذر يخيّم على الأسهم! 🔷 الذهب يقفز بعد ملامسة أدنى مستوى في 14 شهرًا. 🔷 غولدمان ساكس يحذّر: قاع الأسهم لم يتأكد بعد، وموجة البيع قد تستمر. 🔷 الفائدة ومخاوف الذكاء الاصطناعي وضعف السيولة عوامل قد تزيد الضغط والتقلبات . 🔷 الدولار يواصل…",
       "source": "QUICKECONEWS",
       "url": "https://t.me/QUICKECONEWS/16083"
-    },
-    {
-      "time": "2026-11-22T14:40:38+02:00",
-      "text": "🔴 ترامب يضغط لخفض كبير وفوري للفائدة! 🔺 دعا الرئيس الأميركي الاحتياطي الفيدرالي إلى خفض معدلات الفائدة، معتبرًا أن ذلك قد يدعم النمو الاقتصادي ويخفف كلفة الدين. ⬅️ وتوقع ترامب أن يقفز نمو الاقتصاد الأميركي إلى 15%–20% إذا اتُّبعت رؤيته، مشيرًا إلى أن الهند تحقق نموًا قويًا مع معدلات فائدة منخفضة",
-      "source": "QUICKECONEWS",
-      "url": "https://t.me/QUICKECONEWS/16077"
     }
   ],
   "agenda": [
