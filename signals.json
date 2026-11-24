@@ -2,12 +2,12 @@
   "channel": "Ziko Gold Trading",
   "telegram": "https://t.me/zikogoldtrading",
   "facebook": "https://www.facebook.com/zikogoldtrading",
-  "updated_at": "2026-11-24T16:45:08+02:00",
-  "updated_at_utc": "2026-11-24T14:45:21Z",
+  "updated_at": "2026-11-24T16:54:55+02:00",
+  "updated_at_utc": "2026-11-24T14:55:07Z",
   "method": "Scalping H1 + 30M + 15M (15M timeframe, closed candles only)",
   "spot": {
-    "gold": 3628.25,
-    "silver": 42.147999,
+    "gold": 3626.0,
+    "silver": 42.182999,
     "currency": "USD",
     "source": "gold-api.com"
   },
@@ -118,7 +118,7 @@
       "direction": "sell",
       "bias": "bearish",
       "entry": 42.63,
-      "sl": 43.52,
+      "sl": 42.63,
       "tp1": 40.85,
       "tp2": 39.07,
       "kind": "normal",
@@ -130,7 +130,7 @@
       "last_signal_posted": {
         "signal": "SELL SETUP",
         "entry": 42.63,
-        "sl": 43.52,
+        "sl": 42.63,
         "tp1": 40.85,
         "tp2": 39.07,
         "posted_at": "2026-11-24T06:06:00+02:00",
@@ -166,7 +166,7 @@
       "direction": "SELL",
       "kind": "normal",
       "entry": 42.63,
-      "sl": 43.52,
+      "sl": 42.63,
       "tp1": 40.85,
       "tp2": 39.07,
       "result": "open",
@@ -406,12 +406,6 @@
       "text": "🟥 أ سعار الذهب تحلق وسعر الأونصة يصعد بأكثر من 165 دولارا، وسط موجة صعود قوية تعزز مكاسب المعدن الأصفر في الأسواق العالمية. ⬤ قناة أَخبار الفوركس العاجلة 🌎 Telegram.me/ForexBreakingNews ✅",
       "source": "ForexBreakingNews",
       "url": "https://t.me/ForexBreakingNews/44155"
-    },
-    {
-      "time": "2026-11-23T16:45:17+02:00",
-      "text": "🟥 صدر الآن : ✅ أمريكا - 🇺🇸 🔵 مؤشر مديري المشتريات الخدمي ▪️ السابق : 56.1 ▪️ التقدير : 55.6 ▫️ الحالي : 54.7 👈 النتيجة : سلبي للدولار الأمريكي 📚 لمتابعة أَخبار الأَسهم والذهب والعملات إِنضم للقناة من الرابط: Telegram.me/ForexBreakingNews ✅",
-      "source": "ForexBreakingNews",
-      "url": "https://t.me/ForexBreakingNews/44152"
     }
   ],
   "agenda": [
