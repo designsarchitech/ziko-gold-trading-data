@@ -726,8 +726,9 @@ function renderNews() {
 // الأحد). The intro before the first day is dropped; the "🔥 الخلاصة:"
 // tail becomes a muted footer line under the day cards.
 var AGENDA_DAYS = ["الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت", "الأحد"];
+var AGENDA_DAYS_EN = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 function splitAgendaDays(text) {
-  var re = new RegExp("(🟢|🟠|🔴|🔵|🟣|🟡|⚪|🇺🇸)?\\s*(" + AGENDA_DAYS.join("|") + ")\\s*:", "g");
+  var re = new RegExp("(🟢|🟠|🔴|🔵|🟣|🟡|⚪|🇺🇸)?\\s*(" + AGENDA_DAYS.concat(AGENDA_DAYS_EN).join("|") + ")\\s*:", "g");
   var parts = [], m, last = null;
   while ((m = re.exec(text)) !== null) {
     if (last) { last.text = text.slice(last.end, m.index).trim(); parts.push(last); }
@@ -743,17 +744,22 @@ function renderAgenda() {
   if (!agenda.length) { sec.style.display = "none"; return; }
   sec.style.display = "";
   const item = agenda[0];
-  const days = splitAgendaDays(item.text || "");
+  // Bilingual agenda: the calendar feed carries text (Arabic) + text_en;
+  // channel agenda items carry text only — fall back to text.
+  const text = (lang === "en" && item.text_en) ? item.text_en : (item.text || "");
+  const days = splitAgendaDays(text);
   if (!days.length) { box.innerHTML = newsItemHtml(item); return; }
   let foot = "";
   const lastDay = days[days.length - 1];
-  const si = lastDay.text.indexOf("🔥 الخلاصة:");
+  const footMarker = (lang === "en") ? "🔥 Summary:" : "🔥 الخلاصة:";
+  const si = lastDay.text.indexOf(footMarker);
   if (si >= 0) { foot = lastDay.text.slice(si).trim(); lastDay.text = lastDay.text.slice(0, si).trim(); }
   let out = days.map(function (d) {
     return "<div class=\"news-item\"><div class=\"agenda-day-title\">" + esc(d.icon + " " + d.day) + "</div><div>" + esc(d.text) + "</div></div>";
   }).join("");
   if (foot) out += "<div class=\"agenda-foot\">" + esc(foot) + "</div>";
-  const meta = esc(t("newsSource") + ": " + (item.source || "")) + " · " + esc(fmtTime(item.time));
+  const src = (lang === "en" && item.source_en) ? item.source_en : (item.source || "");
+  const meta = esc(t("newsSource") + ": " + src) + " · " + esc(fmtTime(item.time));
   out += "<div class=\"agenda-foot\">" + meta + "</div>";
   box.innerHTML = out;
 }
