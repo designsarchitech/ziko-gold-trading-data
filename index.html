@@ -111,6 +111,10 @@
   .news-item .t { color: #8d8778; font-size: 12.5px; }
   .agenda-day-title { color: #d4af37; font-weight: 800; font-size: 15.5px; margin-bottom: 6px; }
   .agenda-foot { color: #8d8778; font-size: 13.5px; line-height: 1.6; margin-top: 10px; }
+  /* High-impact agenda events (Ziko, 25 Nov 2026): top tier bold red,
+     second tier bold orange — same red as the app's loss/result red. */
+  .agenda-hot { color: #ff7a7a; font-weight: 800; }
+  .agenda-warm { color: #ffb86b; font-weight: 700; }
   .news-item a { color: inherit; text-decoration: none; }
   .news-item a:hover { text-decoration: underline; }
   .alerts-box { background: #17171d; border: 1px solid #2c2c34; border-radius: 16px; padding: 16px 14px; }
@@ -737,6 +741,20 @@ function splitAgendaDays(text) {
   if (last) { last.text = text.slice(last.end).trim(); parts.push(last); }
   return parts;
 }
+// Agenda day text with high-impact highlighting: the feed marks top-tier
+// events with 🔴 and second-tier with 🟠 at the start of the event name.
+// Split the day text on its separator and wrap marked parts in a span
+// (bold + color); routine parts stay plain. The time label rides along
+// with the first part of its group, which is fine — a hot release minute
+// stands out as a whole.
+function agendaDayHtml(d) {
+  var sep = (lang === "en") ? "; " : "؛ ";
+  var parts = d.text.split(sep);
+  return parts.map(function (p) {
+    var cls = p.indexOf("🔴") >= 0 ? "agenda-hot" : (p.indexOf("🟠") >= 0 ? "agenda-warm" : "");
+    return cls ? "<span class=\"" + cls + "\">" + esc(p) + "</span>" : esc(p);
+  }).join(sep);
+}
 function renderAgenda() {
   const sec = document.getElementById("agendaSection");
   const box = document.getElementById("agendaList");
@@ -755,7 +773,7 @@ function renderAgenda() {
   const si = lastDay.text.indexOf(footMarker);
   if (si >= 0) { foot = lastDay.text.slice(si).trim(); lastDay.text = lastDay.text.slice(0, si).trim(); }
   let out = days.map(function (d) {
-    return "<div class=\"news-item\"><div class=\"agenda-day-title\">" + esc(d.icon + " " + d.day) + "</div><div>" + esc(d.text) + "</div></div>";
+    return "<div class=\"news-item\"><div class=\"agenda-day-title\">" + esc(d.icon + " " + d.day) + "</div><div>" + agendaDayHtml(d) + "</div></div>";
   }).join("");
   if (foot) out += "<div class=\"agenda-foot\">" + esc(foot) + "</div>";
   const src = (lang === "en" && item.source_en) ? item.source_en : (item.source || "");
