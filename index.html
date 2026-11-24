@@ -743,17 +743,17 @@ function splitAgendaDays(text) {
 }
 // Agenda day text with high-impact highlighting: the feed marks top-tier
 // events with 🔴 and second-tier with 🟠 at the start of the event name.
-// Split the day text on its separator and wrap marked parts in a span
-// (bold + color); routine parts stay plain. The time label rides along
-// with the first part of its group, which is fine — a hot release minute
-// stands out as a whole.
+// Each event is on its own line (Ziko 25 Nov 2026: every news item starts
+// on a new line). Split on newlines (and the legacy "؛ " / "; " separator
+// for older channel-agenda items) and wrap marked lines in a span
+// (bold + color); routine lines stay plain. Each line carries its own
+// time label, so a hot release minute stands out as a whole line.
 function agendaDayHtml(d) {
-  var sep = (lang === "en") ? "; " : "؛ ";
-  var parts = d.text.split(sep);
+  var parts = d.text.split(/\n|؛ |; /).filter(function (p) { return p.trim().length > 0; });
   return parts.map(function (p) {
     var cls = p.indexOf("🔴") >= 0 ? "agenda-hot" : (p.indexOf("🟠") >= 0 ? "agenda-warm" : "");
     return cls ? "<span class=\"" + cls + "\">" + esc(p) + "</span>" : esc(p);
-  }).join(sep);
+  }).join("<br>");
 }
 function renderAgenda() {
   const sec = document.getElementById("agendaSection");
