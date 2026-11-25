@@ -1137,6 +1137,7 @@ const T = {
     watchLevel: "مستوى تحت المراقبة",
     noEntry: "مفيش دخول دلوقتي",
     activeSignal: "إشارة دخول فعالة",
+    closedSignal: "انتهت التوصية",
     newSignal: "إشارة جديدة",
     tp1Hit: "تحقق الهدف الأول",
     tp1Tp2Hit: "تحقق الهدف الأول ثم الثاني",
@@ -1239,6 +1240,7 @@ const T = {
     watchLevel: "Watch level",
     noEntry: "No entry",
     activeSignal: "Active entry signal",
+    closedSignal: "Signal closed",
     newSignal: "New signal",
     tp1Hit: "TP1 hit",
     tp1Tp2Hit: "TP1 hit, then TP2",
@@ -1453,6 +1455,13 @@ function trackHtml(d) {
     const tp2 = Number(d.tp2);
     if (!isFinite(tp2)) return "";
     pts = Math.round(Math.abs(entry - tp2) / pip); final = true;
+  } else if (d.result === "tp1" && d.sl_hit) {
+    // TP1 hit, then the stop loss was hit (the stop had been moved onto the
+    // TP1 price to lock the profit): the trade is closed — freeze the result
+    // at the locked TP1 points instead of tracking the live price.
+    const tp1 = Number(d.tp1);
+    if (!isFinite(tp1)) return "";
+    pts = Math.round(Math.abs(entry - tp1) / pip); final = true;
   } else if (d.result === "sl") {
     const sl = Number(d.sl);
     if (!isFinite(sl)) return "";
@@ -1498,7 +1507,7 @@ function renderSignals() {
   // inside each group. (24 Nov 2026, Ziko: the active signal stays on top.)
   function isActiveCard(d) {
     if (String(d.signal || "").toUpperCase() === "WAIT") return false;
-    return d.result !== "both" && d.result !== "sl";
+    return d.result !== "both" && d.result !== "sl" && !d.sl_hit;
   }
   cards.sort(function (a, b) {
     const aa = isActiveCard(a) ? 0 : 1, bb = isActiveCard(b) ? 0 : 1;
@@ -1515,7 +1524,7 @@ function renderSignals() {
     const track = isWait ? "" : trackHtml(d);
     const cond = isWait
       ? "<div class=\"cond\">" + esc(t("watchLevel")) + (typeof d.entry === "number" ? " " + esc(d.entry) : "") + " — " + esc(t("noEntry")) + "</div>"
-      : "<div class=\"cond\">" + esc(t("activeSignal")) + "</div>";
+      : "<div class=\"cond\">" + esc(isActiveCard(d) ? t("activeSignal") : t("closedSignal")) + "</div>";
     // Breakeven-secured: stop loss moved onto the entry price (open BUY/SELL
     // only). The system never posts SL == entry, so equality can only mean
     // the stop was moved to breakeven — show the secured badge under the SL.
