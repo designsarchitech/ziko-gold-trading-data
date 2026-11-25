@@ -86,6 +86,8 @@
   .nums .lbl { color: #8d8778; font-size: 12.5px; }
   .nums .v { font-size: 18px; font-weight: 800; direction: ltr; text-align: end; }
   .nums .secured { font-size: 12.5px; font-weight: 700; color: #5eead4; text-align: end; margin-top: 2px; }
+  .nums .orig-sl { font-size: 12.5px; font-weight: 400; color: #8d8778; text-align: end; margin-top: 2px; }
+  .h-orig { font-size: 12px; color: #8d8778; }
   .cond { color: #cbb96a; font-size: 13.5px; line-height: 1.6; margin-top: 10px; }
   .last-posted { border-top: 1px solid #2c2c34; margin-top: 12px; padding-top: 10px; font-size: 13.5px; color: #b8b0a0; line-height: 1.8; }
   .last-posted b { color: #f2ede0; }
@@ -1072,6 +1074,7 @@ const T = {
     sell: "🔴 بيع",
     entry: "➡️ الدخول",
     stopLoss: "🛑 وقف الخسارة",
+    origSl: "الأصلي",
     slSecured: "🔒 مؤمّنة",
     tp1: "✅ الهدف الأول",
     tp2: "✅ الهدف الثاني",
@@ -1173,6 +1176,7 @@ const T = {
     sell: "🔴 SELL",
     entry: "➡️ Entry",
     stopLoss: "🛑 Stop loss",
+    origSl: "original",
     slSecured: "🔒 Secured",
     tp1: "✅ Target 1",
     tp2: "✅ Target 2",
@@ -1517,6 +1521,10 @@ function renderSignals() {
     // the stop was moved to breakeven — show the secured badge under the SL.
     const securedHtml = (!isWait && d.result !== "sl" && typeof d.sl === "number" && typeof d.entry === "number" && d.sl === d.entry)
       ? "<div class=\"secured\">" + esc(t("slSecured")) + "</div>" : "";
+    // Original stop-loss: when the stop was moved, show the posted (original)
+    // SL under the current one so the card stays honest about what changed.
+    const origSlHtml = (!isWait && d.original_sl != null && d.sl != null && Number(d.original_sl) !== Number(d.sl))
+      ? "<div class=\"orig-sl\">" + esc(t("origSl")) + ": " + esc(d.original_sl) + "</div>" : "";
     // Single source of truth: the card shows the LAST POSTED signal on the
     // Telegram channel only (d.posted_at = when that post went out). The
     // numbers change only when a newer post lands — never from unposted
@@ -1537,7 +1545,7 @@ function renderSignals() {
       (isWait ? "" :
       "<div class=\"nums\">" +
       "<div class=\"cell\"><div class=\"lbl\">" + esc(t("entry")) + "</div><div class=\"v\">" + esc(d.entry) + "</div></div>" +
-      "<div class=\"cell\"><div class=\"lbl\">" + esc(t("stopLoss")) + "</div><div class=\"v\">" + esc(d.sl) + securedHtml + "</div></div>" +
+      "<div class=\"cell\"><div class=\"lbl\">" + esc(t("stopLoss")) + "</div><div class=\"v\">" + esc(d.sl) + origSlHtml + securedHtml + "</div></div>" +
       "<div class=\"cell\"><div class=\"lbl\">" + esc(t("tp1")) + "</div><div class=\"v\">" + esc(d.tp1) + "</div></div>" +
       "<div class=\"cell\"><div class=\"lbl\">" + esc(t("tp2")) + "</div><div class=\"v\">" + esc(d.tp2) + "</div></div>" +
       "</div>") + cond + track + posted + "</div>";
@@ -1760,9 +1768,13 @@ function renderHistory() {
     const pts = histPoints(e);
     if (pts > 0) ptsLine = '<div class="h-points">' + esc(t("histPoints")) + " <b>" + pts.toLocaleString("en-US") + "</b> " + esc(t("histPointsUnit")) + "</div>";
     else if (pts < 0) ptsLine = '<div class="h-points loss">' + esc(t("histPointsLost")) + " <b>" + Math.abs(pts).toLocaleString("en-US") + "</b> " + esc(t("histPointsUnit")) + "</div>";
+    let slHtml = esc(t("stopLoss")) + " <b>" + esc(e.sl) + "</b>";
+    if (e.original_sl != null && e.sl != null && Number(e.original_sl) !== Number(e.sl)) {
+      slHtml += " <span class=\"h-orig\">(" + esc(t("origSl")) + ": " + esc(e.original_sl) + ")</span>";
+    }
     return '<div class="hist-item"><div class="h-head"><span>' + esc(metal) + " — " + esc(dir) +
       ' <span class="h-kind">' + esc(kind) + "</span></span><span>" + esc(fmtDateTime(e.posted_at)) + "</span></div>" +
-      '<div class="h-nums">' + esc(t("entry")) + " <b>" + esc(e.entry) + "</b> · " + esc(t("stopLoss")) + " <b>" + esc(e.sl) + "</b> · " +
+      '<div class="h-nums">' + esc(t("entry")) + " <b>" + esc(e.entry) + "</b> · " + slHtml + " · " +
       esc(t("tp1")) + " <b>" + esc(e.tp1) + "</b> · " + esc(t("tp2")) + " <b>" + esc(e.tp2) + "</b></div>" + res + ptsLine + "</div>";
   }).join("");
 }
