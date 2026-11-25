@@ -2,12 +2,12 @@
   "channel": "Ziko Gold Trading",
   "telegram": "https://t.me/zikogoldtrading",
   "facebook": "https://www.facebook.com/zikogoldtrading",
-  "updated_at": "2026-11-25T18:12:06+02:00",
-  "updated_at_utc": "2026-11-25T16:12:15Z",
+  "updated_at": "2026-11-25T19:05:40+02:00",
+  "updated_at_utc": "2026-11-25T17:05:49Z",
   "method": "Scalping H1 + 30M + 15M (15M timeframe, closed candles only)",
   "spot": {
-    "gold": 3449.350098,
-    "silver": 38.535,
+    "gold": 3473.5,
+    "silver": 38.869999,
     "currency": "USD",
     "source": "gold-api.com"
   },
@@ -16,16 +16,17 @@
     "signal": "WAIT",
     "direction": "bearish",
     "bias": "sideways",
-    "entry": 3486,
+    "entry": 3476,
     "sl": null,
+    "original_sl": null,
     "tp1": null,
     "tp2": null,
     "kind": "scalp",
-    "posted_at": "2026-11-25T18:01:00+02:00",
-    "telegram_msg_id": 260,
+    "posted_at": "2026-11-25T19:04:00+02:00",
+    "telegram_msg_id": 263,
     "result": null,
     "result_at": null,
-    "condition": "Monitoring level 3486 — no entry",
+    "condition": "Monitoring level 3476 — no entry",
     "last_signal_posted": {
       "signal": "SELL SCALP",
       "entry": 3550.58,
@@ -41,16 +42,17 @@
     "signal": "WAIT",
     "direction": "bearish",
     "bias": "sideways",
-    "entry": 39.62,
+    "entry": 39.4,
     "sl": null,
+    "original_sl": null,
     "tp1": null,
     "tp2": null,
     "kind": "scalp",
-    "posted_at": "2026-11-25T18:01:00+02:00",
-    "telegram_msg_id": 261,
+    "posted_at": "2026-11-25T19:04:00+02:00",
+    "telegram_msg_id": 264,
     "result": null,
     "result_at": null,
-    "condition": "Monitoring level 39.62 — no entry",
+    "condition": "Monitoring level 39.4 — no entry",
     "last_signal_posted": {
       "signal": "SELL SCALP",
       "entry": 41.95,
@@ -67,16 +69,17 @@
       "signal": "WAIT",
       "direction": "bearish",
       "bias": "sideways",
-      "entry": 3486,
+      "entry": 3476,
       "sl": null,
+      "original_sl": null,
       "tp1": null,
       "tp2": null,
       "kind": "scalp",
-      "posted_at": "2026-11-25T18:01:00+02:00",
-      "telegram_msg_id": 260,
+      "posted_at": "2026-11-25T19:04:00+02:00",
+      "telegram_msg_id": 263,
       "result": null,
       "result_at": null,
-      "condition": "Monitoring level 3486 — no entry",
+      "condition": "Monitoring level 3476 — no entry",
       "last_signal_posted": {
         "signal": "SELL SCALP",
         "entry": 3550.58,
@@ -92,16 +95,17 @@
       "signal": "WAIT",
       "direction": "bearish",
       "bias": "sideways",
-      "entry": 39.62,
+      "entry": 39.4,
       "sl": null,
+      "original_sl": null,
       "tp1": null,
       "tp2": null,
       "kind": "scalp",
-      "posted_at": "2026-11-25T18:01:00+02:00",
-      "telegram_msg_id": 261,
+      "posted_at": "2026-11-25T19:04:00+02:00",
+      "telegram_msg_id": 264,
       "result": null,
       "result_at": null,
-      "condition": "Monitoring level 39.62 — no entry",
+      "condition": "Monitoring level 39.4 — no entry",
       "last_signal_posted": {
         "signal": "SELL SCALP",
         "entry": 41.95,
@@ -169,20 +173,20 @@
     "gold": {
       "signal": "WAIT",
       "direction": "bearish",
-      "entry": 3486,
+      "entry": 3476,
       "sl": null,
       "tp1": null,
       "tp2": null,
-      "last_analysis": "2026-11-25T18:01:00+02:00"
+      "last_analysis": "2026-11-25T19:04:00+02:00"
     },
     "silver": {
       "signal": "WAIT",
       "direction": "bearish",
-      "entry": 39.62,
+      "entry": 39.4,
       "sl": null,
       "tp1": null,
       "tp2": null,
-      "last_analysis": "2026-11-25T18:01:00+02:00"
+      "last_analysis": "2026-11-25T19:04:00+02:00"
     }
   },
   "history": [
@@ -202,7 +206,8 @@
       "tp2_points": 214,
       "sl_points": 0,
       "points": 214,
-      "telegram_msg_id": 227
+      "telegram_msg_id": 227,
+      "original_sl": 3561.3
     },
     {
       "id": "2026-11-25-0503-normal-XAUUSD",
@@ -277,7 +282,8 @@
       "tp1_points": 130,
       "tp2_points": 230,
       "points": 230,
-      "sl_points": 0
+      "sl_points": 0,
+      "original_sl": 3563
     },
     {
       "direction": "SELL",
@@ -295,7 +301,8 @@
       "tp1_points": 42,
       "tp2_points": 84,
       "points": 84,
-      "sl_points": 0
+      "sl_points": 0,
+      "original_sl": 42.37
     },
     {
       "direction": "SELL",
@@ -313,7 +320,8 @@
       "tp1_points": 140,
       "tp2_points": 280,
       "points": 280,
-      "sl_points": 0
+      "sl_points": 0,
+      "original_sl": 3583
     },
     {
       "direction": "SELL",
@@ -331,7 +339,8 @@
       "tp1_points": 39,
       "tp2_points": 62,
       "points": 62,
-      "sl_points": 0
+      "sl_points": 0,
+      "original_sl": 42.58
     },
     {
       "direction": "SELL",
@@ -349,7 +358,8 @@
       "tp1_points": 30,
       "tp2_points": 60,
       "points": 60,
-      "sl_points": 0
+      "sl_points": 0,
+      "original_sl": 44.71
     },
     {
       "direction": "SELL",
@@ -367,7 +377,8 @@
       "tp1_points": 110,
       "tp2_points": 170,
       "points": 170,
-      "sl_points": 0
+      "sl_points": 0,
+      "original_sl": 3697
     },
     {
       "direction": "SELL",
@@ -385,7 +396,8 @@
       "tp1_points": 35,
       "tp2_points": 70,
       "points": 70,
-      "sl_points": 0
+      "sl_points": 0,
+      "original_sl": 45.13
     },
     {
       "direction": "SELL",
@@ -403,7 +415,8 @@
       "tp1_points": 100,
       "tp2_points": 200,
       "points": 200,
-      "sl_points": 0
+      "sl_points": 0,
+      "original_sl": 3736
     },
     {
       "direction": "SELL",
@@ -421,7 +434,8 @@
       "tp1_points": 30,
       "tp2_points": 60,
       "points": 60,
-      "sl_points": 0
+      "sl_points": 0,
+      "original_sl": 45.37
     },
     {
       "direction": "SELL",
@@ -439,7 +453,8 @@
       "tp1_points": 33,
       "tp2_points": 65,
       "points": 65,
-      "sl_points": 0
+      "sl_points": 0,
+      "original_sl": 45.58
     },
     {
       "direction": "SELL",
@@ -457,7 +472,8 @@
       "tp1_points": 150,
       "tp2_points": 300,
       "points": 300,
-      "sl_points": 0
+      "sl_points": 0,
+      "original_sl": 3747
     }
   ],
   "news": [
@@ -470,7 +486,7 @@
       "time": "2026-11-25T15:30:00+02:00",
       "published_at": "2026-11-25T13:30:00Z",
       "published_at_cairo": "2026-11-25T15:30:00+02:00",
-      "fetched_at": "2026-11-25T18:12:07+02:00",
+      "fetched_at": "2026-11-25T19:05:40+02:00",
       "source": "BEA",
       "source_en": "مكتب التحليل الاقتصادي BEA",
       "url": "https://www.bea.gov/news/2026/gdp-second-estimate-and-corporate-profits-3rd-quarter-2026",
@@ -510,7 +526,7 @@
       "time": "2026-11-25T15:30:00+02:00",
       "published_at": "2026-11-25T13:30:00Z",
       "published_at_cairo": "2026-11-25T15:30:00+02:00",
-      "fetched_at": "2026-11-25T18:12:07+02:00",
+      "fetched_at": "2026-11-25T19:05:40+02:00",
       "source": "BEA",
       "source_en": "مكتب التحليل الاقتصادي BEA",
       "url": "https://www.bea.gov/news/2026/personal-income-and-outlays-october-2026",
@@ -566,7 +582,7 @@
       "time": "2026-11-24T21:00:00+02:00",
       "published_at": "2026-11-24T19:00:00Z",
       "published_at_cairo": "2026-11-24T21:00:00+02:00",
-      "fetched_at": "2026-11-25T18:12:07+02:00",
+      "fetched_at": "2026-11-25T19:05:40+02:00",
       "source": "الاحتياطي الفيدرالي",
       "source_en": "Federal Reserve",
       "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261124a.htm",
@@ -589,7 +605,7 @@
       "time": "2026-11-18T21:00:00+02:00",
       "published_at": "2026-11-18T19:00:00Z",
       "published_at_cairo": "2026-11-18T21:00:00+02:00",
-      "fetched_at": "2026-11-25T18:12:07+02:00",
+      "fetched_at": "2026-11-25T19:05:40+02:00",
       "source": "الاحتياطي الفيدرالي",
       "source_en": "Federal Reserve",
       "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261118a.htm",
@@ -612,7 +628,7 @@
       "time": "2026-11-12T19:45:00+02:00",
       "published_at": "2026-11-12T17:45:00Z",
       "published_at_cairo": "2026-11-12T19:45:00+02:00",
-      "fetched_at": "2026-11-25T18:12:07+02:00",
+      "fetched_at": "2026-11-25T19:05:40+02:00",
       "source": "الاحتياطي الفيدرالي",
       "source_en": "Federal Reserve",
       "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261112a.htm",
@@ -635,7 +651,7 @@
       "time": "2026-11-04T15:30:00+02:00",
       "published_at": "2026-11-04T13:30:00Z",
       "published_at_cairo": "2026-11-04T15:30:00+02:00",
-      "fetched_at": "2026-11-25T18:12:07+02:00",
+      "fetched_at": "2026-11-25T19:05:40+02:00",
       "source": "BEA",
       "source_en": "مكتب التحليل الاقتصادي BEA",
       "url": "https://www.bea.gov/news/2026/us-international-trade-goods-and-services-september-2026",
@@ -731,7 +747,7 @@
       "time": "2026-10-29T15:30:00+03:00",
       "published_at": "2026-10-29T12:30:00Z",
       "published_at_cairo": "2026-10-29T15:30:00+03:00",
-      "fetched_at": "2026-11-25T18:12:07+02:00",
+      "fetched_at": "2026-11-25T19:05:40+02:00",
       "source": "BEA",
       "source_en": "مكتب التحليل الاقتصادي BEA",
       "url": "https://www.bea.gov/news/2026/personal-income-and-outlays-september-2026",
@@ -795,7 +811,7 @@
       "time": "2026-10-28T21:00:00+03:00",
       "published_at": "2026-10-28T18:00:00Z",
       "published_at_cairo": "2026-10-28T21:00:00+03:00",
-      "fetched_at": "2026-11-25T18:12:07+02:00",
+      "fetched_at": "2026-11-25T19:05:40+02:00",
       "source": "الاحتياطي الفيدرالي",
       "source_en": "Federal Reserve",
       "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261028a.htm",
@@ -827,7 +843,7 @@
       "time": "2026-10-13T21:00:00+03:00",
       "published_at": "2026-10-13T18:00:00Z",
       "published_at_cairo": "2026-10-13T21:00:00+03:00",
-      "fetched_at": "2026-11-25T18:12:07+02:00",
+      "fetched_at": "2026-11-25T19:05:40+02:00",
       "source": "الاحتياطي الفيدرالي",
       "source_en": "Federal Reserve",
       "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261013a.htm",
@@ -847,7 +863,7 @@
       "Federal Reserve",
       "BEA"
     ],
-    "last_check_ok": "2026-11-25T18:12:07+0200",
+    "last_check_ok": "2026-11-25T19:05:40+0200",
     "last_check_fail": null,
     "count": 10,
     "top_count": 2
