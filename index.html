@@ -69,7 +69,7 @@ html { scroll-behavior: smooth; }
   .sum-price small { font-size: 14px; color: #b8b0a0; }
   .sum-card .nums { margin-top: 12px; }
   .sum-card .note { color: #8d8778; font-size: 12.5px; line-height: 1.5; margin-top: 10px; }
-  .chg.up { color: #5eead4; }
+  .chg.up { color: #3FB96A; }
   .chg.down { color: #ff7a7a; }
   .sum-line { background: #17171d; border: 1px solid #2c2c34; border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; font-size: 15px; font-weight: 700; line-height: 1.6; }
   h2 { font-size: 22px; font-weight: 800; margin: 22px 0 4px; }
@@ -89,18 +89,18 @@ html { scroll-behavior: smooth; }
    card pulses like the live-signal cards, colored by the day change:
    up -> green, down -> red, flat -> gold). */
 @keyframes glowPulseGreen {
-  0%, 100% { box-shadow: 0 0 12px 1px rgba(94,234,212,.25); border-color: rgba(94,234,212,.55); }
-  50% { box-shadow: 0 0 28px 6px rgba(94,234,212,.5); border-color: #5eead4; }
+  0%, 100% { box-shadow: 0 0 12px 1px rgba(63,185,106,.25); border-color: rgba(63,185,106,.55); }
+  50% { box-shadow: 0 0 28px 6px rgba(63,185,106,.5); border-color: #3FB96A; }
 }
 @keyframes glowPulseRed {
   0%, 100% { box-shadow: 0 0 12px 1px rgba(255,122,122,.25); border-color: rgba(255,122,122,.55); }
   50% { box-shadow: 0 0 28px 6px rgba(255,122,122,.5); border-color: #ff7a7a; }
 }
-.price-card.glow-up { animation: glowPulseGreen 2s ease-in-out infinite; border-color: rgba(94,234,212,.55); }
+.price-card.glow-up { animation: glowPulseGreen 2s ease-in-out infinite; border-color: rgba(63,185,106,.55); }
 .price-card.glow-down { animation: glowPulseRed 2s ease-in-out infinite; border-color: rgba(255,122,122,.55); }
 .price-card.glow-flat { animation: glowPulse 2s ease-in-out infinite; border-color: rgba(212,175,55,.55); }
 @media (prefers-reduced-motion: reduce) {
-  .price-card.glow-up { animation: none; box-shadow: 0 0 12px 1px rgba(94,234,212,.3); }
+  .price-card.glow-up { animation: none; box-shadow: 0 0 12px 1px rgba(63,185,106,.3); }
   .price-card.glow-down { animation: none; box-shadow: 0 0 12px 1px rgba(255,122,122,.3); }
   .price-card.glow-flat { animation: none; box-shadow: 0 0 12px 1px rgba(212,175,55,.3); }
 }
@@ -1168,7 +1168,7 @@ const T = {
     loading: "جارٍ التحميل...",
     noData: "لا توجد بيانات بعد.",
     noActiveSignals: "مفيش إشارات نشطة دلوقتي — الإشارات المنتهية في سجل الإشارات تحت.",
-    navSignals: "التوصيات الفعالة",
+    navSignals: "إشارات الدخول",
     navTopNews: "أبرز الأخبار",
     navAgenda: "أجندة الأسبوع",
     navHistory: "سجل الإشارات",
@@ -1285,7 +1285,7 @@ const T = {
     loading: "Loading...",
     noData: "No data yet.",
     noActiveSignals: "No active signals right now — finished signals are in the signals history below.",
-    navSignals: "Active signals",
+    navSignals: "Entry signals",
     navTopNews: "Top news",
     navAgenda: "Weekly agenda",
     navHistory: "Signals history",
