@@ -1889,11 +1889,14 @@ function renderAll() {
 }
 
 // Market hours (same rule as the crons): Mon-Fri from 01:00 EET.
-// US gold-market holidays the crons also skip (step 0): New Year's Day
-// (Jan 1), Christmas Day (Dec 25) and Thanksgiving (4th Thursday of
-// November). Other US holidays are caught on the cron side by the
-// "no fresh closed candles" check; the app has no candle feed, so it
-// mirrors only the named dates.
+// The pill tracks the SPOT market (where our prices and signals come
+// from), not the US exchanges: spot gold trades on Thanksgiving
+// (verified 26 Nov 2026 — fresh Twelve Data candles, live TV/OANDA
+// prices, signal #G-009 posted), so Thanksgiving is NOT excluded.
+// New Year's Day (Jan 1) and Christmas Day (Dec 25) stay excluded
+// (spot market closed those days). Other US holidays are caught on
+// the cron side by the "no fresh closed candles" check; the app has
+// no candle feed, so it mirrors only the named dates.
 function isMarketOpen() {
   try {
     const now = new Date();
@@ -1903,7 +1906,6 @@ function isMarketOpen() {
     if (["Mon", "Tue", "Wed", "Thu", "Fri"].indexOf(wd) < 0 || h < 1) return false;
     if (mo === 1 && dy === 1) return false;      // New Year's Day
     if (mo === 12 && dy === 25) return false;    // Christmas Day
-    if (mo === 11 && wd === "Thu" && dy >= 22 && dy <= 28) return false; // Thanksgiving (4th Thursday of November)
     return true;
   } catch (e) { return false; }
 }
