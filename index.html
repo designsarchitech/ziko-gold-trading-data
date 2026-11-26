@@ -108,6 +108,14 @@ html { scroll-behavior: smooth; }
   .last-posted { border-top: 1px solid #2c2c34; margin-top: 12px; padding-top: 10px; font-size: 13.5px; color: #b8b0a0; line-height: 1.8; }
   .last-posted b { color: #f2ede0; }
   .news-item { background: #17171d; border: 1px solid #2c2c34; border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; font-size: 14.5px; line-height: 1.6; }
+.news-item.news-collapsed, .news-item.news-open { cursor: pointer; }
+.news-item .news-impact { color: #cbb96a; margin-top: 4px; font-weight: 800; }
+.news-item .news-details { display: none; }
+.news-item.news-open .news-details { display: block; }
+.news-item .news-toggle { margin-top: 8px; font-size: 13px; font-weight: 800; color: #d4af37; }
+.news-item .news-toggle .hide { display: none; }
+.news-item.news-open .news-toggle .hide { display: inline; }
+.news-item.news-open .news-toggle .show { display: none; }
   .hist-item { background: #17171d; border: 1px solid #2c2c34; border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; font-size: 14px; line-height: 1.7; }
   .hist-item .h-head { display: flex; justify-content: space-between; gap: 6px 10px; flex-wrap: wrap; font-weight: 800; }
   .hist-item .h-kind { color: #8d8778; font-size: 12.5px; font-weight: 400; }
@@ -1133,6 +1141,8 @@ const T = {
     latestNews: "الأحدث",
     archiveNews: "أرشيف الأخبار",
     newsChecked: "آخر فحص ناجح",
+    showDetails: "عرض التفاصيل ▾",
+    hideDetails: "إخفاء التفاصيل ▴",
     newsCheckFail: "آخر فحص فاشل",
     publishedAt: "نُشر",
     fetchedAt: "جُلب",
@@ -1242,6 +1252,8 @@ const T = {
     latestNews: "Latest",
     archiveNews: "Archive",
     newsChecked: "Last successful check",
+    showDetails: "Show details ▾",
+    hideDetails: "Hide details ▴",
     newsCheckFail: "Last failed check",
     publishedAt: "Published",
     fetchedAt: "Fetched",
@@ -1620,14 +1632,32 @@ function newsItemHtml(n) {
   // the title OUTSIDE the link; the analysis line is the publisher's
   // own block (starts with 📊, contains its own "تحليل —"), rendered
   // as-is with newlines as <br> (26 Nov 2026, app-news parallel).
+  // COLLAPSIBLE CARDS (26 Nov 2026, Ziko): the card shows the title +
+  // the impact line only; summary/figures/analysis/meta hide inside
+  // .news-details until the card is tapped (tap toggles news-open).
+  // The impact line is the first 📊 line of the analysis; the rest of
+  // the analysis stays in the details. Items with no impact line render
+  // fully expanded, as before.
   var title = esc(n.title_ar || n.text);
   if (n.url) { title = "<a href=\"" + esc(n.url) + "\" target=\"_blank\" rel=\"noopener\">" + title + "</a>"; }
   if (n.code) { title = esc(n.code) + " — " + title; }
   var body = "<div class=\"news-title\">" + title +
     (n.figures_status === "conflict" ? " <span class=\"news-conflict\">(غير مؤكد)</span>" : "") + "</div>";
-  if (n.summary) { body += "<div class=\"news-summary\">" + esc(n.summary) + "</div>"; }
+  var impact = "";
+  var analysisRest = "";
+  if (n.analysis) {
+    var alines = String(n.analysis).split(/\n/);
+    var rest = [];
+    alines.forEach(function (ln) {
+      if (!impact && ln.indexOf("📊") === 0) { impact = ln; } else { rest.push(ln); }
+    });
+    analysisRest = rest.join("\n").trim();
+  }
+  if (impact) { body += "<div class=\"news-impact\">" + esc(impact) + "</div>"; }
+  var details = "";
+  if (n.summary) { details += "<div class=\"news-summary\">" + esc(n.summary) + "</div>"; }
   if (n.figures && n.figures.length) {
-    body += "<div class=\"news-figures\">" + n.figures.map(function (f) {
+    details += "<div class=\"news-figures\">" + n.figures.map(function (f) {
       var line = esc(f.label) + ": " + esc(f.value) + " " + esc(f.unit) +
         " (" + esc(f.period) + "، " + esc(f.source) + ")";
       if (f.confirmed === false) { line += " (غير مؤكد)"; }
@@ -1638,9 +1668,9 @@ function newsItemHtml(n) {
   if (n.cached_verified) {
     var cnote = esc(t("cachedNote"));
     if (n.verified_at) { cnote += " · " + esc(t("lastVerified") + ": " + fmtDateTime(n.verified_at)); }
-    body += "<div class=\"news-cached\">" + cnote + "</div>";
+    details += "<div class=\"news-cached\">" + cnote + "</div>";
   }
-  if (n.analysis) { body += "<div class=\"news-analysis\">" + esc(n.analysis).replace(/\n/g, "<br>") + "</div>"; }
+  if (analysisRest) { details += "<div class=\"news-analysis\">" + esc(analysisRest).replace(/\n/g, "<br>") + "</div>"; }
   // Meta: source + published time + fetch time kept separate. Published
   // time is rendered readable in Cairo time (fmtDateTime: day + month +
   // time) — fmtTime alone shows the time without the date, so the date
@@ -1651,7 +1681,12 @@ function newsItemHtml(n) {
   if (pub) { meta += (meta ? " · " : "") + esc(t("publishedAt") + ": " + pub); }
   if (n.fetched_at) { meta += (meta ? " · " : "") + esc(t("fetchedAt") + ": " + fmtDateTime(n.fetched_at)); }
   if (!meta && n.time) { meta = esc(fmtTime(n.time)); }
-  return "<div class=\"news-item\">" + body + "<div class=\"t\">" + meta + "</div></div>";
+  if (impact) {
+    return "<div class=\"news-item news-collapsed\" onclick=\"if(event.target.closest('a'))return;this.classList.toggle('news-collapsed');this.classList.toggle('news-open')\">" + body +
+      "<div class=\"news-details\">" + details + "<div class=\"t\">" + meta + "</div></div>" +
+      "<div class=\"news-toggle\"><span class=\"show\">" + esc(t("showDetails")) + "</span><span class=\"hide\">" + esc(t("hideDetails")) + "</span></div></div>";
+  }
+  return "<div class=\"news-item\">" + body + details + "<div class=\"t\">" + meta + "</div></div>";
 }
 
 // Check-line formatting (25 Nov 2026): the ok time renders readable in
