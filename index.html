@@ -1624,6 +1624,18 @@ function renderSignals() {
   box.innerHTML = html;
 }
 
+// Expanded news cards survive the 30s feed refresh (26 Nov 2026): the
+// key is the item URL (stable per release), falling back to the title.
+// Without this, renderAll() rebuilds the news list every 30s and any
+// card the user opened snaps shut on its own.
+var expandedNews = {};
+function newsCardKey(n) { return n.url || n.title_ar || n.text || ""; }
+function toggleNewsCard(el) {
+  var key = el.getAttribute("data-news-key") || "";
+  var open = el.classList.toggle("news-open");
+  el.classList.toggle("news-collapsed", !open);
+  if (key) { if (open) { expandedNews[key] = true; } else { delete expandedNews[key]; } }
+}
 function newsItemHtml(n) {
   // New official-news fields (title_ar/summary/figures/published_at/
   // fetched_at/section/is_top/code/analysis) render when present; an old
@@ -1632,12 +1644,12 @@ function newsItemHtml(n) {
   // the title OUTSIDE the link; the analysis line is the publisher's
   // own block (starts with 📊, contains its own "تحليل —"), rendered
   // as-is with newlines as <br> (26 Nov 2026, app-news parallel).
-  // COLLAPSIBLE CARDS (26 Nov 2026, Ziko): the card shows the title +
-  // the impact line only; summary/figures/analysis/meta hide inside
-  // .news-details until the card is tapped (tap toggles news-open).
-  // The impact line is the first 📊 line of the analysis; the rest of
-  // the analysis stays in the details. Items with no impact line render
-  // fully expanded, as before.
+  // COLLAPSIBLE CARDS (26 Nov 2026, Ziko): every card with body content
+  // shows the title + the impact line only; summary/figures/analysis/
+  // meta hide inside .news-details until the card is tapped (tap toggles
+  // news-open). The impact line is the first 📊 line of the analysis;
+  // cards with no impact line collapse to title only. Items with no body
+  // content at all render fully expanded, as before.
   var title = esc(n.title_ar || n.text);
   if (n.url) { title = "<a href=\"" + esc(n.url) + "\" target=\"_blank\" rel=\"noopener\">" + title + "</a>"; }
   if (n.code) { title = esc(n.code) + " — " + title; }
@@ -1681,8 +1693,11 @@ function newsItemHtml(n) {
   if (pub) { meta += (meta ? " · " : "") + esc(t("publishedAt") + ": " + pub); }
   if (n.fetched_at) { meta += (meta ? " · " : "") + esc(t("fetchedAt") + ": " + fmtDateTime(n.fetched_at)); }
   if (!meta && n.time) { meta = esc(fmtTime(n.time)); }
-  if (impact) {
-    return "<div class=\"news-item news-collapsed\" onclick=\"if(event.target.closest('a'))return;this.classList.toggle('news-collapsed');this.classList.toggle('news-open')\">" + body +
+  var hasDetails = !!(n.summary || (n.figures && n.figures.length) || analysisRest || n.cached_verified);
+  if (hasDetails) {
+    var key = newsCardKey(n);
+    var isOpen = !!key && !!expandedNews[key];
+    return "<div class=\"news-item" + (isOpen ? " news-open" : " news-collapsed") + "\" data-news-key=\"" + esc(key) + "\" onclick=\"if(event.target.closest('a'))return;toggleNewsCard(this)\">" + body +
       "<div class=\"news-details\">" + details + "<div class=\"t\">" + meta + "</div></div>" +
       "<div class=\"news-toggle\"><span class=\"show\">" + esc(t("showDetails")) + "</span><span class=\"hide\">" + esc(t("hideDetails")) + "</span></div></div>";
   }
