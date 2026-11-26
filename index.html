@@ -45,6 +45,7 @@ html { scroll-behavior: smooth; }
 .sec-nav::-webkit-scrollbar { display: none; }
 .sec-nav a { flex: 0 0 auto; background: #221f15; border: 1.5px solid #d4af37; color: #e8c85a; border-radius: 999px; padding: 8px 14px; font-size: 14px; font-weight: 800; text-decoration: none; white-space: nowrap; }
 .sec-nav a:active { background: #2e2a1a; }
+.sec-nav a .new-badge { background: #d4af37; color: #141419; font-size: 10px; border-radius: 999px; padding: 1px 6px; margin-inline-start: 4px; font-weight: 800; }
 #sec-signals, #sec-history, #topNewsBox, #agendaSection, #newsArchive { scroll-margin-top: 64px; }
   .pill .dot { width: 9px; height: 9px; border-radius: 50%; background: #2fbf71; display: inline-block; }
   .pill .dot.closed { background: #e05252; }
@@ -169,10 +170,15 @@ html { scroll-behavior: smooth; }
   #alertsList { list-style: none; margin: 12px 0 0; padding: 0; }
   #alertsList li { background: #101014; border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; font-size: 14px; line-height: 1.6; }
   .muted { color: #8d8778; font-size: 13.5px; line-height: 1.6; }
-  .sub-btns { display: grid; gap: 10px; }
-  .sub-btn { display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 12px; padding: 13px; font-size: 16px; font-weight: 800; text-decoration: none; }
+  .sub-btns { display: grid; gap: 12px; }
+  .sub-btn { display: flex; align-items: center; justify-content: center; gap: 10px; border-radius: 14px; padding: 15px; font-size: 17px; font-weight: 800; text-decoration: none; }
+  .sub-btn svg { width: 26px; height: 26px; flex: 0 0 auto; }
   .sub-btn.tg { background: #229ed9; color: #fff; }
   .sub-btn.fb { background: #1877f2; color: #fff; }
+  .sub-btn.ig { background: linear-gradient(45deg, #f58529, #dd2a7b, #8134af); color: #fff; }
+  .sub-btn.x { background: #000; color: #fff; border: 1.5px solid #3a3a44; }
+  .sub-btn.tt { background: #010101; color: #fff; border: 1.5px solid #3a3a44; }
+  .sub-btn.yt { background: #ff0000; color: #fff; }
   footer { text-align: center; color: #8d8778; font-size: 12.5px; line-height: 1.7; margin-top: 26px; }
   .empty { color: #8d8778; font-size: 14px; text-align: center; padding: 8px 0; }
 </style>
@@ -203,6 +209,7 @@ html { scroll-behavior: smooth; }
     <a href="#agendaSection" data-i18n="navAgenda" id="navAgendaLink"></a>
     <a href="#sec-history" data-i18n="navHistory"></a>
     <a href="#newsLatest" data-i18n="navLatest"></a>
+    <a href="#sec-subscribe"><span data-i18n="navSubscribe"></span> <span class="new-badge" data-i18n="newBadge"></span></a>
   </nav>
 
   <div id="staleBanner"></div>
@@ -253,10 +260,14 @@ html { scroll-behavior: smooth; }
     <div class="muted" id="alertsEmpty" data-i18n="alertsEmpty"></div>
   </div>
 
-  <h2 data-i18n="subscribeTitle"></h2>
+  <h2 id="sec-subscribe" data-i18n="subscribeTitle"></h2>
   <div class="sub-btns">
-    <a class="sub-btn tg" href="https://t.me/zikogoldtrading" target="_blank" rel="noopener" data-i18n="subscribeTelegram"></a>
-    <a class="sub-btn fb" href="https://www.facebook.com/zikogoldtrading" target="_blank" rel="noopener" data-i18n="subscribeFacebook"></a>
+    <a class="sub-btn tg" href="https://t.me/zikogoldtrading" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg><span data-i18n="subscribeTelegram"></span></a>
+    <a class="sub-btn fb" href="https://www.facebook.com/zikogoldtrading" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg><span data-i18n="subscribeFacebook"></span></a>
+    <a class="sub-btn ig" href="https://instagram.com/zikogoldtrading" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5" fill="none" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.4" fill="none" stroke="#fff" stroke-width="2"/><circle cx="17.4" cy="6.6" r="1.5" fill="#fff"/></svg><span data-i18n="subscribeInstagram"></span></a>
+    <a class="sub-btn x" href="https://x.com/ZikoGoldTrading" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg><span data-i18n="subscribeX"></span></a>
+    <a class="sub-btn tt" href="https://www.tiktok.com/@ziko.gold.trading" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg><span data-i18n="subscribeTiktok"></span></a>
+    <a class="sub-btn yt" id="ytBtn" href="https://www.youtube.com/@ZikoGoldTrading" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4" fill="none" stroke="#fff" stroke-width="2"/><path d="M10 9.2v5.6L15 12z" fill="#fff"/></svg><span data-i18n="subscribeYoutube"></span></a>
   </div>
 
   <footer>
@@ -1126,6 +1137,10 @@ const T = {
     subscribeTitle: "اشترك",
     subscribeTelegram: "اشترك في قناة التليجرام",
     subscribeFacebook: "تابع صفحة الفيسبوك",
+    subscribeInstagram: "تابع إنستجرام",
+    subscribeX: "تابع على X",
+    subscribeTiktok: "تابع تيك توك",
+    subscribeYoutube: "قناة اليوتيوب",
     methodLine: "تحليل فني H4 + H1 + 30M + 15M — دخول ووقف وهدفين",
     disclaimer: "تحليل تعليمي فقط، وليس نصيحة مالية.",
     staleBanner: "تعذّر جلب تحديث أجدد دلوقتي — المعروض آخر بيانات محفوظة بالتطبيق، وهنحاول تاني تلقائياً.",
@@ -1138,6 +1153,8 @@ const T = {
     navAgenda: "أجندة الأسبوع",
     navHistory: "سجل الإشارات",
     navLatest: "أحدث الأخبار",
+    navSubscribe: "اشترك",
+    newBadge: "جديد",
     noNews: "لا توجد أخبار بعد.",
     latestNews: "الأحدث",
     archiveNews: "أرشيف الأخبار",
@@ -1237,6 +1254,10 @@ const T = {
     subscribeTitle: "Subscribe",
     subscribeTelegram: "Join the Telegram channel",
     subscribeFacebook: "Follow the Facebook page",
+    subscribeInstagram: "Follow on Instagram",
+    subscribeX: "Follow on X",
+    subscribeTiktok: "Follow on TikTok",
+    subscribeYoutube: "YouTube channel",
     methodLine: "Technical analysis H4 + H1 + 30M + 15M — entry, stop and two targets",
     disclaimer: "Educational analysis only, not financial advice.",
     staleBanner: "Couldn't fetch a newer update right now — showing the last saved data. We'll retry automatically.",
@@ -1249,6 +1270,8 @@ const T = {
     navAgenda: "Weekly agenda",
     navHistory: "Signals history",
     navLatest: "Latest news",
+    navSubscribe: "Subscribe",
+    newBadge: "NEW",
     noNews: "No news yet.",
     latestNews: "Latest",
     archiveNews: "Archive",
@@ -1414,6 +1437,8 @@ function applyLang() {
   document.documentElement.lang = lang;
   document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
   document.getElementById("langBtn").textContent = lang === "ar" ? "EN" : "عربي";
+  var ytBtn = document.getElementById("ytBtn");
+  if (ytBtn) ytBtn.href = lang === "ar" ? "https://www.youtube.com/@ZikoGoldTrading" : "https://www.youtube.com/@ZikoGoldTradingEN";
   document.querySelectorAll("[data-i18n]").forEach(function (el) {
     el.textContent = t(el.getAttribute("data-i18n"));
   });
