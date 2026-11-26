@@ -72,8 +72,9 @@ html { scroll-behavior: smooth; }
   .chg.up { color: #5eead4; }
   .chg.down { color: #ff7a7a; }
   .sum-line { background: #17171d; border: 1px solid #2c2c34; border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; font-size: 15px; font-weight: 700; line-height: 1.6; }
-  .sum-news-label { color: #8d8778; font-size: 13px; margin: 4px 0 8px; }
-  h2 { font-size: 20px; margin: 22px 0 4px; }
+  h2 { font-size: 22px; font-weight: 800; margin: 22px 0 4px; }
+  h2::after { content: ""; display: block; width: 64px; height: 3px; margin-top: 6px; border-radius: 2px; background: linear-gradient(to left, #d4af37, rgba(212,175,55,0)); }
+  html[dir="ltr"] h2::after { background: linear-gradient(to right, #d4af37, rgba(212,175,55,0)); }
   .updated { color: #8d8778; font-size: 13px; margin-bottom: 12px; }
   .sig-card { background: #17171d; border: 1px solid #2c2c34; border-radius: 16px; padding: 16px 14px; margin-bottom: 12px; }
 /* Live-signal glow (26 Nov 2026, Ziko: the active card glows on and off
@@ -84,6 +85,25 @@ html { scroll-behavior: smooth; }
 }
 .sig-card.live-glow { animation: glowPulse 2s ease-in-out infinite; border-color: rgba(212,175,55,.55); }
 @media (prefers-reduced-motion: reduce) { .sig-card.live-glow { animation: none; box-shadow: 0 0 12px 1px rgba(212,175,55,.3); } }
+/* Price-card glow (26 Nov 2026, Ziko: while the market is open each price
+   card pulses like the live-signal cards, colored by the day change:
+   up -> green, down -> red, flat -> gold). */
+@keyframes glowPulseGreen {
+  0%, 100% { box-shadow: 0 0 12px 1px rgba(94,234,212,.25); border-color: rgba(94,234,212,.55); }
+  50% { box-shadow: 0 0 28px 6px rgba(94,234,212,.5); border-color: #5eead4; }
+}
+@keyframes glowPulseRed {
+  0%, 100% { box-shadow: 0 0 12px 1px rgba(255,122,122,.25); border-color: rgba(255,122,122,.55); }
+  50% { box-shadow: 0 0 28px 6px rgba(255,122,122,.5); border-color: #ff7a7a; }
+}
+.price-card.glow-up { animation: glowPulseGreen 2s ease-in-out infinite; border-color: rgba(94,234,212,.55); }
+.price-card.glow-down { animation: glowPulseRed 2s ease-in-out infinite; border-color: rgba(255,122,122,.55); }
+.price-card.glow-flat { animation: glowPulse 2s ease-in-out infinite; border-color: rgba(212,175,55,.55); }
+@media (prefers-reduced-motion: reduce) {
+  .price-card.glow-up { animation: none; box-shadow: 0 0 12px 1px rgba(94,234,212,.3); }
+  .price-card.glow-down { animation: none; box-shadow: 0 0 12px 1px rgba(255,122,122,.3); }
+  .price-card.glow-flat { animation: none; box-shadow: 0 0 12px 1px rgba(212,175,55,.3); }
+}
   .sig-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   .sig-head .name { font-size: 18px; font-weight: 800; }
   .badge { border-radius: 999px; padding: 5px 12px; font-size: 14px; font-weight: 800; }
@@ -215,12 +235,12 @@ html { scroll-behavior: smooth; }
   <div id="staleBanner"></div>
 
   <div class="prices">
-    <div class="price-card">
+    <div class="price-card" id="goldPriceCard">
       <div><span class="name" data-i18n="gold"></span><span class="sym">XAU/USD</span></div>
       <div class="val"><small>$</small> <span id="goldPrice">—</span></div>
       <div class="note" id="goldPriceNote"></div>
     </div>
-    <div class="price-card">
+    <div class="price-card" id="silverPriceCard">
       <div><span class="name" data-i18n="silver"></span><span class="sym">XAG/USD</span></div>
       <div class="val"><small>$</small> <span id="silverPrice">—</span></div>
       <div class="note" id="silverPriceNote"></div>
@@ -1512,6 +1532,28 @@ function renderPrices() {
   document.getElementById("silverPrice").textContent = fmtPrice(livePrices.silver);
   document.getElementById("goldPriceNote").textContent = priceNote("gold");
   document.getElementById("silverPriceNote").textContent = priceNote("silver");
+  syncPriceGlow();
+}
+
+// Price-card glow (26 Nov 2026, Ziko): while the market is open each price
+// card pulses like the live-signal cards, colored by the day change
+// (TradingView scanner, same number as ملخص السوق): up -> green,
+// down -> red, flat (|change| < 0.05% or unknown) -> gold. Market
+// closed -> no glow at all. Called from renderPrices + renderSummary so
+// it follows both the 60s price poll and the day-stats refresh.
+function syncPriceGlow() {
+  var open = isMarketOpen();
+  [["gold", "goldPriceCard"], ["silver", "silverPriceCard"]].forEach(function (pair) {
+    var card = document.getElementById(pair[1]);
+    if (!card) return;
+    card.classList.remove("glow-up", "glow-down", "glow-flat");
+    if (!open) return;
+    var st = dayStats[pair[0]];
+    var chg = st && typeof st.change === "number" ? st.change : null;
+    if (chg === null || Math.abs(chg) < 0.05) card.classList.add("glow-flat");
+    else if (chg > 0) card.classList.add("glow-up");
+    else card.classList.add("glow-down");
+  });
 }
 
 // Live result tracking on the signal card: floating points from the live
@@ -2005,6 +2047,7 @@ function renderSummary() {
     html += "<div class=\"sum-line\">" + esc(todays.length + " " + t("signalsToday") + " — " + hits + " " + t("hitTargets")) + "</div>";
   }
   box.innerHTML = html;
+  syncPriceGlow();
 }
 // Top 2 news, in its own section right after the entry signals — same data
 // as the news section.
@@ -2012,7 +2055,7 @@ function renderTopNews() {
   const box = document.getElementById("topNewsBox");
   if (!box) return;
   const news = (currentFeed && currentFeed.news) || [];
-  let html = "<div class=\"sum-news-label\">" + esc(t("summaryNews")) + "</div>";
+  let html = "<h2>" + esc(t("summaryNews")) + "</h2>";
   if (!news.length) {
     html += "<div class=\"empty\">" + esc(t("noNews")) + "</div>";
   } else {
