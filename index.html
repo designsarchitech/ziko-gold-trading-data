@@ -1564,10 +1564,15 @@ function renderSignals() {
 
 function newsItemHtml(n) {
   // New official-news fields (title_ar/summary/figures/published_at/
-  // fetched_at/section/is_top) render when present; an old item with only
-  // text/time/source/url renders exactly as before (backward compatible).
+  // fetched_at/section/is_top/code/analysis) render when present; an old
+  // item with only text/time/source/url renders exactly as before
+  // (backward compatible). The event code (GDP/PCE/FOMC/Trade) prefixes
+  // the title OUTSIDE the link; the analysis line is the publisher's
+  // own block (starts with 📊, contains its own "تحليل —"), rendered
+  // as-is with newlines as <br> (26 Nov 2026, app-news parallel).
   var title = esc(n.title_ar || n.text);
   if (n.url) { title = "<a href=\"" + esc(n.url) + "\" target=\"_blank\" rel=\"noopener\">" + title + "</a>"; }
+  if (n.code) { title = esc(n.code) + " — " + title; }
   var body = "<div class=\"news-title\">" + title +
     (n.figures_status === "conflict" ? " <span class=\"news-conflict\">(غير مؤكد)</span>" : "") + "</div>";
   if (n.summary) { body += "<div class=\"news-summary\">" + esc(n.summary) + "</div>"; }
@@ -1585,7 +1590,7 @@ function newsItemHtml(n) {
     if (n.verified_at) { cnote += " · " + esc(t("lastVerified") + ": " + fmtDateTime(n.verified_at)); }
     body += "<div class=\"news-cached\">" + cnote + "</div>";
   }
-  if (n.analysis) { body += "<div class=\"news-analysis\">تحليل: " + esc(n.analysis) + "</div>"; }
+  if (n.analysis) { body += "<div class=\"news-analysis\">" + esc(n.analysis).replace(/\n/g, "<br>") + "</div>"; }
   // Meta: source + published time + fetch time kept separate. Published
   // time is rendered readable in Cairo time (fmtDateTime: day + month +
   // time) — fmtTime alone shows the time without the date, so the date
@@ -1870,9 +1875,10 @@ function renderTopNews() {
   if (!news.length) {
     html += "<div class=\"empty\">" + esc(t("noNews")) + "</div>";
   } else {
-    // is_top = the latest 1-2 official releases actually published, by
-    // publish date (not the first two blindly). Old feeds without the
-    // flag fall back to the first two, as before.
+    // is_top = the 2 most IMPORTANT displayed releases (26 Nov 2026):
+    // importance rank (FOMC statement/minutes, GDP, PCE first), then
+    // newest — not the first two blindly. Old feeds without the flag
+    // fall back to the first two, as before.
     const top = news.filter(function (n) { return n.is_top; });
     html += (top.length ? top : news.slice(0, 2)).map(newsItemHtml).join("");
   }
