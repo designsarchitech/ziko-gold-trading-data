@@ -70,7 +70,7 @@ html { scroll-behavior: smooth; }
   .sum-card .nums { margin-top: 12px; }
   .sum-card .note { color: #8d8778; font-size: 12.5px; line-height: 1.5; margin-top: 10px; }
   .chg.up { color: #00C853; }
-  .chg.down { color: #ff7a7a; }
+  .chg.down { color: #F44336; }
   .sum-line { background: #17171d; border: 1px solid #2c2c34; border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; font-size: 15px; font-weight: 700; line-height: 1.6; }
   h2 { font-size: 22px; font-weight: 800; margin: 22px 0 4px; }
   h2::after { content: ""; display: block; width: 64px; height: 3px; margin-top: 6px; border-radius: 2px; background: linear-gradient(to left, #d4af37, rgba(212,175,55,0)); }
@@ -93,15 +93,15 @@ html { scroll-behavior: smooth; }
   50% { box-shadow: 0 0 28px 6px rgba(0,200,83,.5); border-color: #00C853; }
 }
 @keyframes glowPulseRed {
-  0%, 100% { box-shadow: 0 0 12px 1px rgba(255,122,122,.25); border-color: rgba(255,122,122,.55); }
-  50% { box-shadow: 0 0 28px 6px rgba(255,122,122,.5); border-color: #ff7a7a; }
+  0%, 100% { box-shadow: 0 0 12px 1px rgba(244,67,54,.25); border-color: rgba(244,67,54,.55); }
+  50% { box-shadow: 0 0 28px 6px rgba(244,67,54,.5); border-color: #F44336; }
 }
 .price-card.glow-up { animation: glowPulseGreen 2s ease-in-out infinite; border-color: rgba(0,200,83,.55); }
-.price-card.glow-down { animation: glowPulseRed 2s ease-in-out infinite; border-color: rgba(255,122,122,.55); }
+.price-card.glow-down { animation: glowPulseRed 2s ease-in-out infinite; border-color: rgba(244,67,54,.55); }
 .price-card.glow-flat { animation: glowPulse 2s ease-in-out infinite; border-color: rgba(212,175,55,.55); }
 @media (prefers-reduced-motion: reduce) {
   .price-card.glow-up { animation: none; box-shadow: 0 0 12px 1px rgba(0,200,83,.3); }
-  .price-card.glow-down { animation: none; box-shadow: 0 0 12px 1px rgba(255,122,122,.3); }
+  .price-card.glow-down { animation: none; box-shadow: 0 0 12px 1px rgba(244,67,54,.3); }
   .price-card.glow-flat { animation: none; box-shadow: 0 0 12px 1px rgba(212,175,55,.3); }
 }
   .sig-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
@@ -110,11 +110,11 @@ html { scroll-behavior: smooth; }
   .state-ico { font-size: 28px; line-height: 1; margin-inline-start: 8px; }
   .badge.wait { background: #4a3d10; color: #ffd75e; }
   .badge.buy { background: #123d24; color: #5eead4; }
-  .badge.sell { background: #4a1717; color: #ff7a7a; }
+  .badge.sell { background: #4a1717; color: #F44336; }
   .kind-badge { border: 1px solid #3a3a44; color: #d4af37; border-radius: 999px; padding: 3px 10px; font-size: 12.5px; font-weight: 700; }
   .track { margin-top: 10px; font-size: 15px; font-weight: 800; }
   .track.up { color: #5eead4; }
-  .track.down { color: #ff7a7a; }
+  .track.down { color: #F44336; }
   .track.flat { color: #8d8778; }
   .track .locked { color: #5eead4; }
   .bias { color: #b8b0a0; font-size: 14px; margin: 8px 0 12px; }
@@ -146,22 +146,22 @@ html { scroll-behavior: smooth; }
   .hist-item .h-res { margin-top: 4px; font-weight: 800; }
   .hist-item .h-res.tp1, .hist-item .h-res.both { color: #5eead4; }
   .hist-item .h-res.open { color: #ffd75e; }
-  .hist-item .h-res.sl { color: #ff7a7a; }
+  .hist-item .h-res.sl { color: #F44336; }
   .hist-item .h-points { margin-top: 2px; font-weight: 800; color: #5eead4; }
-  .hist-item .h-points.loss { color: #ff7a7a; }
+  .hist-item .h-points.loss { color: #F44336; }
   .hist-basis { font-size: 13px; color: #9a9aa3; margin: 6px 0 12px; line-height: 1.6; }
   .hist-total { background: #17171d; border: 1px solid #b8860b; border-radius: 12px; padding: 10px 14px; margin-bottom: 8px; font-size: 14px; line-height: 1.7; font-weight: 800; }
   .hist-total .hist-week { font-size: 13px; color: #9a9aa3; font-weight: 400; }
   .hist-total .metal-gold { color: #d4af37; }
   .hist-total .metal-silver { color: #c0c0c0; }
   .hist-total .pts-win { color: #5eead4; }
-  .hist-total .pts-loss { color: #ff7a7a; }
+  .hist-total .pts-loss { color: #F44336; }
   .news-item .t { color: #8d8778; font-size: 12.5px; }
   .agenda-day-title { color: #d4af37; font-weight: 800; font-size: 15.5px; margin-bottom: 6px; }
   .agenda-foot { color: #8d8778; font-size: 13.5px; line-height: 1.6; margin-top: 10px; }
   /* High-impact agenda events (Ziko, 25 Nov 2026): top tier bold red,
      second tier bold orange — same red as the app's loss/result red. */
-  .agenda-hot { color: #ff7a7a; font-weight: 800; }
+  .agenda-hot { color: #F44336; font-weight: 800; }
   .agenda-warm { color: #ffb86b; font-weight: 700; }
   .news-item a { color: inherit; text-decoration: none; }
   .news-item a:hover { text-decoration: underline; }
@@ -177,7 +177,7 @@ html { scroll-behavior: smooth; }
   .news-section-label { color: #d4af37; font-weight: 800; font-size: 13.5px; margin: 12px 0 6px; }
   .news-check { color: #8d8778; font-size: 12.5px; margin-bottom: 8px; line-height: 1.6; }
   .news-cached { color: #cbb96a; font-size: 12.5px; margin-top: 6px; }
-  .news-conflict { color: #ff7a7a; font-weight: 800; }
+  .news-conflict { color: #F44336; font-weight: 800; }
   .alerts-box { background: #17171d; border: 1px solid #2c2c34; border-radius: 16px; padding: 16px 14px; }
   .alerts-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   .switch { position: relative; width: 52px; height: 30px; flex: none; }
@@ -1558,7 +1558,7 @@ function syncPriceGlow() {
 
 // Live result tracking on the signal card: floating points from the live
 // price vs the entry (pip scale, "نقطة"), green for profit (#5eead4),
-// red for loss (#ff7a7a). While the signal is open the number moves with
+// red for loss (#F44336). While the signal is open the number moves with
 // the live price (refreshed every minute); once resolved it freezes at the
 // final result (furthest target reached, or the stop-loss distance as a
 // negative number — the review method).
