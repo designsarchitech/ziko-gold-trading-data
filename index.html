@@ -1634,7 +1634,19 @@ function toggleNewsCard(el) {
   var key = el.getAttribute("data-news-key") || "";
   var open = el.classList.toggle("news-open");
   el.classList.toggle("news-collapsed", !open);
-  if (key) { if (open) { expandedNews[key] = true; } else { delete expandedNews[key]; } }
+  if (key) {
+    if (open) { expandedNews[key] = true; } else { delete expandedNews[key]; }
+    // Same item appears twice (featured + list): keep all copies in sync
+    // so collapsing one collapses the other immediately, not on the
+    // next 30s refresh.
+    var cards = document.querySelectorAll(".news-item[data-news-key]");
+    for (var i = 0; i < cards.length; i++) {
+      if (cards[i] !== el && cards[i].getAttribute("data-news-key") === key) {
+        cards[i].classList.toggle("news-open", open);
+        cards[i].classList.toggle("news-collapsed", !open);
+      }
+    }
+  }
 }
 function newsItemHtml(n) {
   // New official-news fields (title_ar/summary/figures/published_at/
