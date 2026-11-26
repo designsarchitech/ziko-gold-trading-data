@@ -38,6 +38,14 @@
   #langBtn { margin-inline-start: auto; background: #1c1c22; color: #e8c15a; border: 1px solid #3a3a44; border-radius: 999px; padding: 8px 14px; font-size: 14px; font-weight: 700; cursor: pointer; flex: none; }
   .pills { display: flex; gap: 10px; margin: 18px 0 14px; }
   .pill { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; background: #17171d; border: 1px solid #2c2c34; border-radius: 999px; padding: 10px 8px; font-size: 15px; font-weight: 700; cursor: pointer; color: #f2ede0; }
+html { scroll-behavior: smooth; }
+/* Section nav (26 Nov 2026, Ziko): sticky chip bar under the header —
+   stays visible while scrolling, jumps to each section. */
+.sec-nav { position: sticky; top: 0; z-index: 50; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 10px 2px; margin: 0 -2px; background: #0b0b0f; }
+.sec-nav::-webkit-scrollbar { display: none; }
+.sec-nav a { flex: 0 0 auto; background: #17171d; border: 1px solid #2c2c34; color: #f2ede0; border-radius: 999px; padding: 8px 14px; font-size: 14px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+.sec-nav a:active { border-color: #d4af37; color: #d4af37; }
+#sec-signals, #sec-history, #topNewsBox, #agendaSection, #newsArchive { scroll-margin-top: 64px; }
   .pill .dot { width: 9px; height: 9px; border-radius: 50%; background: #2fbf71; display: inline-block; }
   .pill .dot.closed { background: #e05252; }
   .top-alert-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin: 16px 0 0; background: linear-gradient(180deg, #e8c15a, #c9a13b); color: #1a1405; border: none; border-radius: 14px; padding: 14px 16px; font-size: 17px; font-weight: 800; font-family: inherit; cursor: pointer; }
@@ -172,6 +180,14 @@
     <div class="pill"><span class="dot" id="marketDot"></span><span id="marketPill" data-i18n="marketOpen"></span></div>
   </div>
 
+  <nav class="sec-nav">
+    <a href="#sec-signals" data-i18n="navSignals"></a>
+    <a href="#topNewsBox" data-i18n="navTopNews"></a>
+    <a href="#agendaSection" data-i18n="navAgenda" id="navAgendaLink"></a>
+    <a href="#sec-history" data-i18n="navHistory"></a>
+    <a href="#newsLatest" data-i18n="navLatest"></a>
+  </nav>
+
   <div id="staleBanner"></div>
 
   <div class="prices">
@@ -190,7 +206,7 @@
   <h2 data-i18n="summaryTitle"></h2>
   <div id="summaryBox"></div>
 
-  <h2 data-i18n="entrySignals"></h2>
+  <h2 id="sec-signals" data-i18n="entrySignals"></h2>
   <div class="updated"><span data-i18n="lastUpdate"></span>: <span id="lastUpdate">—</span></div>
   <div id="signalCards"></div>
   <div id="topNewsBox"></div>
@@ -200,7 +216,7 @@
   <div id="agendaList"></div>
   </div>
 
-  <h2 data-i18n="historyTitle"></h2>
+  <h2 id="sec-history" data-i18n="historyTitle"></h2>
   <div id="historyList"></div>
 
   <h2 data-i18n="newsTitle"></h2>
@@ -1100,6 +1116,11 @@ const T = {
     loading: "جارٍ التحميل...",
     noData: "لا توجد بيانات بعد.",
     noActiveSignals: "مفيش إشارات نشطة دلوقتي — الإشارات المنتهية في سجل الإشارات تحت.",
+    navSignals: "التوصيات الفعالة",
+    navTopNews: "أبرز الأخبار",
+    navAgenda: "أجندة الأسبوع",
+    navHistory: "سجل الإشارات",
+    navLatest: "أحدث الأخبار",
     noNews: "لا توجد أخبار بعد.",
     latestNews: "الأحدث",
     archiveNews: "أرشيف الأخبار",
@@ -1204,6 +1225,11 @@ const T = {
     loading: "Loading...",
     noData: "No data yet.",
     noActiveSignals: "No active signals right now — finished signals are in the signals history below.",
+    navSignals: "Active signals",
+    navTopNews: "Top news",
+    navAgenda: "Weekly agenda",
+    navHistory: "Signals history",
+    navLatest: "Latest news",
     noNews: "No news yet.",
     latestNews: "Latest",
     archiveNews: "Archive",
@@ -1677,11 +1703,11 @@ function renderNews() {
     html += "</div>";
   }
   if (latest.length) {
-    html += "<div class=\"news-section-label\">" + esc(t("latestNews")) + "</div>" +
+    html += "<div class=\"news-section-label\" id=\"newsLatest\">" + esc(t("latestNews")) + "</div>" +
       latest.map(newsItemHtml).join("");
   }
   if (archive.length) {
-    html += "<div class=\"news-section-label\">" + esc(t("archiveNews")) + "</div>" +
+    html += "<div class=\"news-section-label\" id=\"newsArchive\">" + esc(t("archiveNews")) + "</div>" +
       archive.map(newsItemHtml).join("");
   }
   box.innerHTML = html;
@@ -1721,8 +1747,10 @@ function renderAgenda() {
   const sec = document.getElementById("agendaSection");
   const box = document.getElementById("agendaList");
   const agenda = (currentFeed && currentFeed.agenda) || [];
-  if (!agenda.length) { sec.style.display = "none"; return; }
+  var navAg = document.getElementById("navAgendaLink");
+  if (!agenda.length) { sec.style.display = "none"; if (navAg) navAg.style.display = "none"; return; }
   sec.style.display = "";
+  if (navAg) navAg.style.display = "";
   const item = agenda[0];
   // Bilingual agenda: the calendar feed carries text (Arabic) + text_en;
   // channel agenda items carry text only — fall back to text.
