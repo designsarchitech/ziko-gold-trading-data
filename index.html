@@ -112,10 +112,11 @@ html { scroll-behavior: smooth; }
 .news-item .news-impact { color: #cbb96a; margin-top: 4px; font-weight: 800; }
 .news-item .news-details { display: none; }
 .news-item.news-open .news-details { display: block; }
-.news-item .news-toggle { margin-top: 8px; font-size: 13px; font-weight: 800; color: #d4af37; }
-.news-item .news-toggle .hide { display: none; }
-.news-item.news-open .news-toggle .hide { display: inline; }
-.news-item.news-open .news-toggle .show { display: none; }
+/* Source link is dead while the card is closed (a tap on the card toggles
+   it open instead); it activates only once the card is open, so the
+   title becomes the link to the source (26 Nov 2026, Ziko). */
+.news-item.news-collapsed .news-title a { pointer-events: none; }
+.news-item.news-open .news-title a { text-decoration: underline; }
   .hist-item { background: #17171d; border: 1px solid #2c2c34; border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; font-size: 14px; line-height: 1.7; }
   .hist-item .h-head { display: flex; justify-content: space-between; gap: 6px 10px; flex-wrap: wrap; font-weight: 800; }
   .hist-item .h-kind { color: #8d8778; font-size: 12.5px; font-weight: 400; }
@@ -1657,11 +1658,13 @@ function newsItemHtml(n) {
   // own block (starts with 📊, contains its own "تحليل —"), rendered
   // as-is with newlines as <br> (26 Nov 2026, app-news parallel).
   // COLLAPSIBLE CARDS (26 Nov 2026, Ziko): every card with body content
-  // shows the title + the impact line only; summary/figures/analysis/
-  // meta hide inside .news-details until the card is tapped (tap toggles
-  // news-open). The impact line is the first 📊 line of the analysis;
-  // cards with no impact line collapse to title only. Items with no body
-  // content at all render fully expanded, as before.
+  // shows the title + the impact line only — no hint text, no details.
+  // Tapping the card itself opens the details; tapping it again closes
+  // them. The title link to the source is dead while the card is closed
+  // (CSS: pointer-events none) and activates only when the card is open.
+  // The impact line is the first 📊 line of the analysis; cards with no
+  // impact line collapse to title only. Items with no body content at
+  // all render fully expanded, as before.
   var title = esc(n.title_ar || n.text);
   if (n.url) { title = "<a href=\"" + esc(n.url) + "\" target=\"_blank\" rel=\"noopener\">" + title + "</a>"; }
   if (n.code) { title = esc(n.code) + " — " + title; }
@@ -1710,8 +1713,7 @@ function newsItemHtml(n) {
     var key = newsCardKey(n);
     var isOpen = !!key && !!expandedNews[key];
     return "<div class=\"news-item" + (isOpen ? " news-open" : " news-collapsed") + "\" data-news-key=\"" + esc(key) + "\" onclick=\"if(event.target.closest('a'))return;toggleNewsCard(this)\">" + body +
-      "<div class=\"news-details\">" + details + "<div class=\"t\">" + meta + "</div></div>" +
-      "<div class=\"news-toggle\"><span class=\"show\">" + esc(t("showDetails")) + "</span><span class=\"hide\">" + esc(t("hideDetails")) + "</span></div></div>";
+      "<div class=\"news-details\">" + details + "<div class=\"t\">" + meta + "</div></div></div>";
   }
   return "<div class=\"news-item\">" + body + details + "<div class=\"t\">" + meta + "</div></div>";
 }
