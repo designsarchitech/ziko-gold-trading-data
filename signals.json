@@ -2,12 +2,12 @@
   "channel": "Ziko Gold Trading",
   "telegram": "https://t.me/zikogoldtrading",
   "facebook": "https://www.facebook.com/zikogoldtrading",
-  "updated_at": "2026-11-26T23:45:20+02:00",
-  "updated_at_utc": "2026-11-26T21:45:33Z",
+  "updated_at": "2026-11-27T01:06:27+02:00",
+  "updated_at_utc": "2026-11-26T23:06:43Z",
   "method": "Scalping H1 + 30M + 15M (15M timeframe, closed candles only)",
   "spot": {
-    "gold": 3566.199951,
-    "silver": 41.5366,
+    "gold": 3564.0,
+    "silver": 41.4393,
     "currency": "USD",
     "source": "gold-api.com (gold) / TradingView + BullionVault (silver)"
   },
@@ -183,7 +183,7 @@
       "sl": null,
       "tp1": null,
       "tp2": null,
-      "last_analysis": "2026-11-26T23:45:00+02:00"
+      "last_analysis": "2026-11-27T00:02:00+02:00"
     },
     "silver": {
       "signal": "WAIT",
@@ -192,7 +192,7 @@
       "sl": null,
       "tp1": null,
       "tp2": null,
-      "last_analysis": "2026-11-26T23:45:00+02:00"
+      "last_analysis": "2026-11-27T00:02:00+02:00"
     }
   },
   "history": [
@@ -553,7 +553,7 @@
       "time": "2026-11-25T17:00:00+02:00",
       "published_at": "2026-11-25T15:00:00Z",
       "published_at_cairo": "2026-11-25T17:00:00+02:00",
-      "fetched_at": "2026-11-26T23:45:20+02:00",
+      "fetched_at": "2026-11-27T01:06:27+02:00",
       "source": "مكتب الإحصاء الأمريكي Census",
       "source_en": "U.S. Census Bureau",
       "url": "https://www.census.gov/construction/nrs/pdf/newressales_202610.pdf",
@@ -619,7 +619,7 @@
       "time": "2026-11-25T15:30:00+02:00",
       "published_at": "2026-11-25T13:30:00Z",
       "published_at_cairo": "2026-11-25T15:30:00+02:00",
-      "fetched_at": "2026-11-26T23:45:20+02:00",
+      "fetched_at": "2026-11-27T01:06:27+02:00",
       "source": "BEA",
       "source_en": "مكتب التحليل الاقتصادي BEA",
       "url": "https://www.bea.gov/news/2026/gdp-second-estimate-and-corporate-profits-3rd-quarter-2026",
@@ -661,7 +661,7 @@
       "time": "2026-11-25T15:30:00+02:00",
       "published_at": "2026-11-25T13:30:00Z",
       "published_at_cairo": "2026-11-25T15:30:00+02:00",
-      "fetched_at": "2026-11-26T23:45:20+02:00",
+      "fetched_at": "2026-11-27T01:06:27+02:00",
       "source": "BEA",
       "source_en": "مكتب التحليل الاقتصادي BEA",
       "url": "https://www.bea.gov/news/2026/personal-income-and-outlays-october-2026",
@@ -719,7 +719,7 @@
       "time": "2026-11-25T14:00:00+02:00",
       "published_at": "2026-11-25T12:00:00Z",
       "published_at_cairo": "2026-11-25T14:00:00+02:00",
-      "fetched_at": "2026-11-26T23:45:20+02:00",
+      "fetched_at": "2026-11-27T01:06:27+02:00",
       "source": "الممثل التجاري الأمريكي USTR",
       "source_en": "U.S. Trade Representative",
       "url": "https://ustr.gov/about/policy-offices/press-office/press-releases/2026/november/ustr-makes-determinations-and-proposes-actions-14-section-301-investigations-relating-structural",
@@ -769,7 +769,7 @@
       "time": "2026-11-24T21:00:00+02:00",
       "published_at": "2026-11-24T19:00:00Z",
       "published_at_cairo": "2026-11-24T21:00:00+02:00",
-      "fetched_at": "2026-11-26T23:45:20+02:00",
+      "fetched_at": "2026-11-27T01:06:27+02:00",
       "source": "الاحتياطي الفيدرالي",
       "source_en": "Federal Reserve",
       "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261124a.htm",
@@ -794,7 +794,7 @@
       "time": "2026-11-18T21:00:00+02:00",
       "published_at": "2026-11-18T19:00:00Z",
       "published_at_cairo": "2026-11-18T21:00:00+02:00",
-      "fetched_at": "2026-11-26T23:45:20+02:00",
+      "fetched_at": "2026-11-27T01:06:27+02:00",
       "source": "الاحتياطي الفيدرالي",
       "source_en": "Federal Reserve",
       "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261118a.htm",
@@ -819,7 +819,7 @@
       "time": "2026-11-12T19:45:00+02:00",
       "published_at": "2026-11-12T17:45:00Z",
       "published_at_cairo": "2026-11-12T19:45:00+02:00",
-      "fetched_at": "2026-11-26T23:45:20+02:00",
+      "fetched_at": "2026-11-27T01:06:27+02:00",
       "source": "الاحتياطي الفيدرالي",
       "source_en": "Federal Reserve",
       "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261112a.htm",
@@ -844,7 +844,7 @@
       "time": "2026-11-04T15:30:00+02:00",
       "published_at": "2026-11-04T13:30:00Z",
       "published_at_cairo": "2026-11-04T15:30:00+02:00",
-      "fetched_at": "2026-11-26T23:45:20+02:00",
+      "fetched_at": "2026-11-27T01:06:27+02:00",
       "source": "BEA",
       "source_en": "مكتب التحليل الاقتصادي BEA",
       "url": "https://www.bea.gov/news/2026/us-international-trade-goods-and-services-september-2026",
@@ -944,7 +944,7 @@
       "EIA",
       "USTR"
     ],
-    "last_check_ok": "2026-11-26T23:45:20+0200",
+    "last_check_ok": "2026-11-27T01:06:27+0200",
     "last_check_fail": null,
     "count": 10,
     "top_count": 5,
@@ -952,9 +952,9 @@
   },
   "agenda": [
     {
-      "time": "2026-11-25T01:06:36+02:00",
-      "text": "📅 أبرز ما تترقبه الأسواق هذا الأسبوع:\n🟢 الاثنين:\n4:45 مساءً — مؤشر مديري المشتريات الصناعي (PMI) (صدر 54.5 مقابل متوقع 54.5)\n4:45 مساءً — مؤشر مديري المشتريات الخدمي (PMI) (صدر 54.7 مقابل متوقع 55.6)\n4:45 مساءً — مؤشر مديري المشتريات المركب (PMI) (صدر 54.6 مقابل متوقع 55.6)\n11:00 مساءً — كلمة ويليامز (عضو الفيدرالي)\n🟠 الثلاثاء:\n5:00 مساءً — ثقة المستهلك (صدر 103.3 مقابل متوقع 92.4)\n🔴 الأربعاء: 🚨\n3:30 مساءً — 🔴 مؤشر أسعار نفقات الاستهلاك الشخصي الأساسي (PCE الأساسي) (شهري) (المتوقع 0.3%)\n3:30 مساءً — 🔴 مؤشر أسعار نفقات الاستهلاك الشخصي الأساسي (PCE الأساسي) (سنوي) (المتوقع 3.2%)\n3:30 مساءً — 🔴 الناتج المحلي الإجمالي (GDP) (المتوقع 3.4%)\n3:30 مساءً — 🟠 طلبات إعانة البطالة الأولية (المتوقع 201K)\n3:30 مساءً — 🟠 طلبات السلع المعمرة الأساسية (المتوقع 0.5%)\n3:30 مساءً — 🟠 طلبات السلع المعمرة (المتوقع 0.7%)\n3:30 مساءً — تصاريح البناء (المتوقع 1.295M)\n5:00 مساءً — مبيعات المنازل الجديدة (المتوقع 650K)\n9:00 مساءً — تقرير بيج بوك للفيدرالي\n🇺🇸 الخميس: عطلة عيد الشكر — الأسواق الأمريكية مغلقة، ولا توجد بيانات.\n⚪ الجمعة:\n3:30 مساءً — الميزان التجاري (المتوقع -134.40B)\n(إغلاق مبكر الساعة 8:00 مساءً)\n🔥 الخلاصة: الأربعاء هو يوم الحسم هذا الأسبوع، بسبب تزامن صدور مؤشر أسعار نفقات الاستهلاك الشخصي الأساسي (PCE الأساسي) (شهري) ومؤشر أسعار نفقات الاستهلاك الشخصي الأساسي (PCE الأساسي) (سنوي) والناتج المحلي الإجمالي (GDP) الساعة 3:30 مساءً بتوقيت القاهرة. 👀 ترقبوا التقلبات.\n📌 دليل العلامات: 🔴 خبر مهم ومؤثر • 🟠 خبر مؤثر",
-      "text_en": "📅 What the markets are watching this week:\n🟢 Monday:\n4:45 PM — Manufacturing PMI (actual 54.5 vs forecast 54.5)\n4:45 PM — Services PMI (actual 54.7 vs forecast 55.6)\n4:45 PM — Composite PMI (actual 54.6 vs forecast 55.6)\n11:00 PM — Williams speaks\n🟠 Tuesday:\n5:00 PM — Consumer confidence (actual 103.3 vs forecast 92.4)\n🔴 Wednesday: 🚨\n3:30 PM — 🔴 Core PCE (m/m) (forecast 0.3%)\n3:30 PM — 🔴 Core PCE (y/y) (forecast 3.2%)\n3:30 PM — 🔴 GDP (forecast 3.4%)\n3:30 PM — 🟠 Initial jobless claims (forecast 201K)\n3:30 PM — 🟠 Core durable goods orders (m/m) (forecast 0.5%)\n3:30 PM — 🟠 Durable goods orders (m/m) (forecast 0.7%)\n3:30 PM — Building permits (forecast 1.295M)\n5:00 PM — New home sales (forecast 650K)\n9:00 PM — Beige Book\n🇺🇸 Thursday: Thanksgiving holiday — US markets closed, no data.\n⚪ Friday:\n3:30 PM — Goods trade balance (forecast -134.40B)\n(early close at 8:00 PM)\n🔥 Summary: Wednesday is the key day this week, with Core PCE (m/m), Core PCE (y/y), GDP at 3:30 PM Cairo time. 👀 Expect volatility.\n📌 Legend: 🔴 major market-moving news • 🟠 market-moving news",
+      "time": "2026-11-27T01:06:17+02:00",
+      "text": "📅 أبرز ما تترقبه الأسواق هذا الأسبوع:\n🟢 الاثنين:\n4:45 مساءً — مؤشر مديري المشتريات الصناعي (PMI) (صدر 54.5 مقابل متوقع 54.5)\n4:45 مساءً — مؤشر مديري المشتريات الخدمي (PMI) (صدر 54.7 مقابل متوقع 55.6)\n4:45 مساءً — مؤشر مديري المشتريات المركب (PMI) (صدر 54.6 مقابل متوقع 55.6)\n11:00 مساءً — كلمة ويليامز (عضو الفيدرالي)\n🟠 الثلاثاء:\n5:00 مساءً — ثقة المستهلك (صدر 103.3 مقابل متوقع 92.4)\n🔴 الأربعاء: 🚨\n3:30 مساءً — 🔴 مؤشر أسعار نفقات الاستهلاك الشخصي الأساسي (PCE الأساسي) (شهري) (صدر 0.3% مقابل متوقع 0.3%)\n3:30 مساءً — 🔴 مؤشر أسعار نفقات الاستهلاك الشخصي الأساسي (PCE الأساسي) (سنوي) (صدر 3.3% مقابل متوقع 3.2%)\n3:30 مساءً — 🔴 الناتج المحلي الإجمالي (GDP) (صدر 4.3% مقابل متوقع 3.4%)\n3:30 مساءً — 🟠 طلبات إعانة البطالة الأولية (صدر 189K مقابل متوقع 201K)\n3:30 مساءً — 🟠 طلبات السلع المعمرة الأساسية (صدر 0.5% مقابل متوقع 0.5%)\n3:30 مساءً — 🟠 طلبات السلع المعمرة (صدر 0.2% مقابل متوقع 0.7%)\n3:30 مساءً — تصاريح البناء (صدر 1.297M مقابل متوقع 1.295M)\n2:25 مساءً — FOMC Member Bowman Speaks\n5:00 مساءً — مبيعات المنازل الجديدة (صدر 701K مقابل متوقع 650K)\n9:00 مساءً — تقرير بيج بوك للفيدرالي\n🇺🇸 الخميس: عطلة عيد الشكر — الأسواق الأمريكية مغلقة، ولا توجد بيانات.\n⚪ الجمعة:\n3:30 مساءً — الميزان التجاري (المتوقع -135.90B)\n(إغلاق مبكر الساعة 8:00 مساءً)\n🔥 الخلاصة: الأربعاء هو يوم الحسم هذا الأسبوع، بسبب تزامن صدور مؤشر أسعار نفقات الاستهلاك الشخصي الأساسي (PCE الأساسي) (شهري) ومؤشر أسعار نفقات الاستهلاك الشخصي الأساسي (PCE الأساسي) (سنوي) والناتج المحلي الإجمالي (GDP) الساعة 3:30 مساءً بتوقيت القاهرة. 👀 ترقبوا التقلبات.\n📌 دليل العلامات: 🔴 خبر مهم ومؤثر • 🟠 خبر مؤثر",
+      "text_en": "📅 What the markets are watching this week:\n🟢 Monday:\n4:45 PM — Manufacturing PMI (actual 54.5 vs forecast 54.5)\n4:45 PM — Services PMI (actual 54.7 vs forecast 55.6)\n4:45 PM — Composite PMI (actual 54.6 vs forecast 55.6)\n11:00 PM — Williams speaks\n🟠 Tuesday:\n5:00 PM — Consumer confidence (actual 103.3 vs forecast 92.4)\n🔴 Wednesday: 🚨\n3:30 PM — 🔴 Core PCE (m/m) (actual 0.3% vs forecast 0.3%)\n3:30 PM — 🔴 Core PCE (y/y) (actual 3.3% vs forecast 3.2%)\n3:30 PM — 🔴 GDP (actual 4.3% vs forecast 3.4%)\n3:30 PM — 🟠 Initial jobless claims (actual 189K vs forecast 201K)\n3:30 PM — 🟠 Core durable goods orders (m/m) (actual 0.5% vs forecast 0.5%)\n3:30 PM — 🟠 Durable goods orders (m/m) (actual 0.2% vs forecast 0.7%)\n3:30 PM — Building permits (actual 1.297M vs forecast 1.295M)\n2:25 PM — FOMC Member Bowman Speaks\n5:00 PM — New home sales (actual 701K vs forecast 650K)\n9:00 PM — Beige Book\n🇺🇸 Thursday: Thanksgiving holiday — US markets closed, no data.\n⚪ Friday:\n3:30 PM — Goods trade balance (forecast -135.90B)\n(early close at 8:00 PM)\n🔥 Summary: Wednesday is the key day this week, with Core PCE (m/m), Core PCE (y/y), GDP at 3:30 PM Cairo time. 👀 Expect volatility.\n📌 Legend: 🔴 major market-moving news • 🟠 market-moving news",
       "source": "التقويم الاقتصادي",
       "source_en": "Economic calendar"
     }
