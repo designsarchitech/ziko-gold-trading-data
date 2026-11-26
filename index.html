@@ -1099,6 +1099,7 @@ const T = {
     updating: "جارٍ تحديث البيانات...",
     loading: "جارٍ التحميل...",
     noData: "لا توجد بيانات بعد.",
+    noActiveSignals: "مفيش إشارات نشطة دلوقتي — الإشارات المنتهية في سجل الإشارات تحت.",
     noNews: "لا توجد أخبار بعد.",
     latestNews: "الأحدث",
     archiveNews: "أرشيف الأخبار",
@@ -1202,6 +1203,7 @@ const T = {
     updating: "Updating data…",
     loading: "Loading...",
     noData: "No data yet.",
+    noActiveSignals: "No active signals right now — finished signals are in the signals history below.",
     noNews: "No news yet.",
     latestNews: "Latest",
     archiveNews: "Archive",
@@ -1502,9 +1504,23 @@ function renderSignals() {
   if (!cards.length) {
     cards = [currentFeed.gold, currentFeed.silver].filter(Boolean);
   }
+  // Ended recommendations live in the history section only (26 Nov 2026,
+  // Ziko: a finished signal must not sit on top looking like a new one).
+  // Ended = both targets hit ("both"), stop loss hit ("sl"), or sl_hit.
+  // A TP1-only hit stays — TP2 is still open and the trade is live.
+  cards = cards.filter(function (d) {
+    if (String(d.signal || "").toUpperCase() === "WAIT") return true;
+    return d.result !== "both" && d.result !== "sl" && !d.sl_hit;
+  });
+  if (!cards.length) {
+    box.innerHTML = '<div class="empty">' + esc(t("noActiveSignals")) + "</div>";
+    return;
+  }
   // Active entry signals first (open BUY/SELL — including a TP1-hit trade
-  // whose TP2 is still open), then WAIT / resolved cards; newest first
-  // inside each group. (24 Nov 2026, Ziko: the active signal stays on top.)
+  // whose TP2 is still open), then WAIT cards; newest first inside each
+  // group. (24 Nov 2026, Ziko: the active signal stays on top.) Ended
+  // signals never reach this sort — they are filtered above and live in
+  // the history section only (26 Nov 2026).
   function isActiveCard(d) {
     if (String(d.signal || "").toUpperCase() === "WAIT") return false;
     return d.result !== "both" && d.result !== "sl" && !d.sl_hit;
