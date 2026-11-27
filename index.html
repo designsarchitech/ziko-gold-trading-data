@@ -1957,19 +1957,46 @@ function renderHistory() {
     const p = histPoints(e);
     if (e.symbol === "XAGUSD") silverPts += p; else goldPts += p;
   });
-  let total = "";
-  if (goldPts !== 0 || silverPts !== 0) {
+  // One total box, same format for the current week (top) and for each
+  // completed week (separator rows between weeks).
+  function weekTotalHtml(monday, gPts, sPts) {
     const ptsSpan = function (p) {
       const cls = p > 0 ? "pts-win" : (p < 0 ? "pts-loss" : "");
       return '<b class="' + cls + '">' + p.toLocaleString("en-US") + "</b>";
     };
-    total = '<div class="hist-total">' + esc(t("histTotalPoints")) + ":<br>" +
-      '<span class="hist-week">' + esc(fmtWeekRange()) + "</span><br>" +
-      '<span class="metal-gold">' + esc(t("gold")) + "</span> " + ptsSpan(goldPts) + " " + esc(t("histPointsUnit")) + "<br>" +
-      '<span class="metal-silver">' + esc(t("silver")) + "</span> " + ptsSpan(silverPts) + " " + esc(t("histPointsUnit")) + "</div>";
+    return '<div class="hist-total">' + esc(t("histTotalPoints")) + ":<br>" +
+      '<span class="hist-week">' + esc(fmtWeekRange(monday)) + "</span><br>" +
+      '<span class="metal-gold">' + esc(t("gold")) + "</span> " + ptsSpan(gPts) + " " + esc(t("histPointsUnit")) + "<br>" +
+      '<span class="metal-silver">' + esc(t("silver")) + "</span> " + ptsSpan(sPts) + " " + esc(t("histPointsUnit")) + "</div>";
+  }
+  let total = "";
+  if (goldPts !== 0 || silverPts !== 0) {
+    total = weekTotalHtml(cairoMonday(), goldPts, silverPts);
     total += '<div class="hist-basis">' + esc(t("pointsBasis")) + "</div>";
   }
+  // Totals per week (Mon-Sun, Cairo) for the week separators below.
+  const weekTotals = {};
+  hist.forEach(function (e) {
+    const wk = mondayOf(cairoDay(e.posted_at));
+    if (!wk) return;
+    const wt = weekTotals[wk] || (weekTotals[wk] = { gold: 0, silver: 0 });
+    const p = histPoints(e);
+    if (e.symbol === "XAGUSD") wt.silver += p; else wt.gold += p;
+  });
+  // Week separators: the list is newest-first, so when the week changes
+  // between two entries, insert the older week's total (same box as the
+  // current-week total above) before that week's first entry. prevWeek
+  // starts at the current Monday, so a list with no current-week entries
+  // still gets its latest week's separator at the top.
+  let prevWeek = cairoMonday();
   box.innerHTML = total + hist.map(function (e) {
+    const wk = mondayOf(cairoDay(e.posted_at));
+    let sep = "";
+    if (wk && prevWeek && wk !== prevWeek) {
+      const wt = weekTotals[wk];
+      if (wt) sep = weekTotalHtml(wk, wt.gold, wt.silver);
+    }
+    if (wk) prevWeek = wk;
     const metal = e.symbol === "XAGUSD" ? t("silver") : t("gold");
     const dir = String(e.direction || "").toUpperCase() === "BUY" ? t("buy") : t("sell");
     const kind = e.kind === "normal" ? t("histNormal") : t("histScalp");
@@ -1994,7 +2021,7 @@ function renderHistory() {
     if (e.original_sl != null && e.sl != null && Number(e.original_sl) !== Number(e.sl)) {
       slHtml += " <span class=\"h-orig\">(" + esc(t("origSl")) + ": " + esc(e.original_sl) + ")</span>";
     }
-    return '<div class="hist-item"><div class="h-head"><span>' + esc(metal) + " — " + esc(dir) +
+    return sep + '<div class="hist-item"><div class="h-head"><span>' + esc(metal) + " — " + esc(dir) +
       ' <span class="h-kind">' + esc(kind) + "</span></span><span>" + esc(fmtDateTime(e.posted_at)) + "</span></div>" +
       '<div class="h-nums">' + esc(t("entry")) + " <b>" + esc(e.entry) + "</b> · " + slHtml + "</div>" +
       '<div class="h-nums">' + esc(t("tp1")) + " <b>" + esc(e.tp1) + "</b></div>" +
@@ -2020,10 +2047,21 @@ function cairoMonday() {
     return d.toISOString().slice(0, 10);
   } catch (e) { return ""; }
 }
+// Monday (Cairo date, YYYY-MM-DD) of the week containing a Cairo date.
+function mondayOf(dayStr) {
+  if (!dayStr) return "";
+  try {
+    const d = new Date(dayStr + "T00:00:00Z");
+    if (isNaN(d.getTime())) return "";
+    const off = (d.getUTCDay() + 6) % 7;
+    d.setUTCDate(d.getUTCDate() - off);
+    return d.toISOString().slice(0, 10);
+  } catch (e) { return ""; }
+}
 // Week range (Mon–Sun, Cairo) for the weekly totals line, e.g.
 // "17 – 23 نوفمبر 2026" / "17 – 23 November 2026".
-function fmtWeekRange() {
-  const start = cairoMonday();
+function fmtWeekRange(monday) {
+  const start = monday || cairoMonday();
   if (!start) return "";
   try {
     const d0 = new Date(start + "T00:00:00Z");
