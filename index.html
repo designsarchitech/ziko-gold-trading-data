@@ -228,9 +228,9 @@ html { scroll-behavior: smooth; }
   <nav class="sec-nav">
     <a href="#sec-signals" data-i18n="navSignals"></a>
     <a href="#topNewsBox" data-i18n="navTopNews"></a>
-    <a href="#agendaSection" data-i18n="navAgenda" id="navAgendaLink"></a>
-    <a href="#sec-history" data-i18n="navHistory"></a>
     <a href="#newsLatest" data-i18n="navLatest"></a>
+    <a href="#sec-history" data-i18n="navHistory"></a>
+    <a href="#agendaSection" data-i18n="navAgenda" id="navAgendaLink"></a>
     <a href="#sec-subscribe"><span data-i18n="navSubscribe"></span> <span class="new-badge" data-i18n="newBadge"></span></a>
   </nav>
 
@@ -257,16 +257,16 @@ html { scroll-behavior: smooth; }
   <div id="signalCards"></div>
   <div id="topNewsBox"></div>
 
-  <div id="agendaSection">
-  <h2 data-i18n="agendaTitle"></h2>
-  <div id="agendaList"></div>
-  </div>
+  <h2 data-i18n="newsTitle"></h2>
+  <div id="newsList"></div>
 
   <h2 id="sec-history" data-i18n="historyTitle"></h2>
   <div id="historyList"></div>
 
-  <h2 data-i18n="newsTitle"></h2>
-  <div id="newsList"></div>
+  <div id="agendaSection">
+  <h2 data-i18n="agendaTitle"></h2>
+  <div id="agendaList"></div>
+  </div>
 
   <h2 data-i18n="alertsTitle"></h2>
   <div class="alerts-box">
@@ -1133,7 +1133,7 @@ const T = {
     livePrice: "سعر مباشر",
     lastAvailablePrice: "آخر سعر متاح",
     priceSourceAt: "المصدر",
-    entrySignals: "إشارات الدخول",
+    entrySignals: "توصيات الشراء / البيع",
     lastUpdate: "آخر تحديث",
     wait: "🟡 انتظار",
     buy: "🟢 شراء",
@@ -1169,11 +1169,11 @@ const T = {
     updating: "جارٍ تحديث البيانات...",
     loading: "جارٍ التحميل...",
     noData: "لا توجد بيانات بعد.",
-    noActiveSignals: "مفيش إشارات نشطة دلوقتي — الإشارات المنتهية في سجل الإشارات تحت.",
-    navSignals: "إشارات الدخول",
+    noActiveSignals: "مفيش إشارات نشطة دلوقتي — الإشارات المنتهية في سجل توصيات البيع والشراء تحت.",
+    navSignals: "توصيات الشراء / البيع",
     navTopNews: "أبرز الأخبار",
     navAgenda: "أجندة الأسبوع",
-    navHistory: "سجل الإشارات",
+    navHistory: "سجل توصيات البيع والشراء",
     navLatest: "أحدث الأخبار",
     navSubscribe: "اشترك",
     newBadge: "جديد",
@@ -1188,7 +1188,7 @@ const T = {
     fetchedAt: "جُلب",
     cachedNote: "رقم متحقق منه سابقًا (آخر فحص فاشل)",
     lastVerified: "آخر تحقق",
-    historyTitle: "سجل الإشارات",
+    historyTitle: "سجل توصيات البيع والشراء",
     historyEmpty: "لا توجد إشارات منشورة بعد.",
     histTp1: "🎯 الهدف الأول",
     histBoth: "🎯 الهدفين",
@@ -1252,7 +1252,7 @@ const T = {
     livePrice: "live price",
     lastAvailablePrice: "Last available price",
     priceSourceAt: "Source",
-    entrySignals: "Entry signals",
+    entrySignals: "Buy / Sell Recommendations",
     lastUpdate: "Last update",
     wait: "🟡 WAIT",
     buy: "🟢 BUY",
@@ -1288,11 +1288,11 @@ const T = {
     updating: "Updating data…",
     loading: "Loading...",
     noData: "No data yet.",
-    noActiveSignals: "No active signals right now — finished signals are in the signals history below.",
-    navSignals: "Entry signals",
+    noActiveSignals: "No active signals right now — finished signals are in the buy / sell recommendations history below.",
+    navSignals: "Buy / Sell Recommendations",
     navTopNews: "Top news",
     navAgenda: "Weekly agenda",
-    navHistory: "Signals history",
+    navHistory: "Buy / Sell Recommendations History",
     navLatest: "Latest news",
     navSubscribe: "Subscribe",
     newBadge: "NEW",
@@ -1307,7 +1307,7 @@ const T = {
     fetchedAt: "Fetched",
     cachedNote: "Previously verified figure (last check failed)",
     lastVerified: "Last verified",
-    historyTitle: "Signals history",
+    historyTitle: "Buy / Sell Recommendations History",
     historyEmpty: "No signals posted yet.",
     histTp1: "🎯 Target 1 hit",
     histBoth: "🎯 Both targets hit",
