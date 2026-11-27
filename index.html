@@ -1971,8 +1971,9 @@ function renderHistory() {
     }
     return '<div class="hist-item"><div class="h-head"><span>' + esc(metal) + " — " + esc(dir) +
       ' <span class="h-kind">' + esc(kind) + "</span></span><span>" + esc(fmtDateTime(e.posted_at)) + "</span></div>" +
-      '<div class="h-nums">' + esc(t("entry")) + " <b>" + esc(e.entry) + "</b> · " + slHtml + " · " +
-      esc(t("tp1")) + " <b>" + esc(e.tp1) + "</b> · " + esc(t("tp2")) + " <b>" + esc(e.tp2) + "</b></div>" + res + ptsLine + "</div>";
+      '<div class="h-nums">' + esc(t("entry")) + " <b>" + esc(e.entry) + "</b> · " + slHtml + "</div>" +
+      '<div class="h-nums">' + esc(t("tp1")) + " <b>" + esc(e.tp1) + "</b></div>" +
+      '<div class="h-nums">' + esc(t("tp2")) + " <b>" + esc(e.tp2) + "</b></div>" + res + ptsLine + "</div>";
   }).join("");
 }
 
