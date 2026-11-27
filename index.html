@@ -147,6 +147,8 @@ html { scroll-behavior: smooth; }
   .hist-item .h-res.tp1, .hist-item .h-res.both { color: #5eead4; }
   .hist-item .h-res.open { color: #ffd75e; }
   .hist-item .h-res.sl { color: #F44336; }
+  .hist-item .h-res.breakeven { color: #FF9800; }
+  .hist-item .h-be { color: #FF9800; font-weight: 800; }
   .hist-item .h-points { margin-top: 2px; font-weight: 800; color: #5eead4; }
   .hist-item .h-points.loss { color: #F44336; }
   .hist-basis { font-size: 13px; color: #9a9aa3; margin: 6px 0 12px; line-height: 1.6; }
@@ -1192,6 +1194,7 @@ const T = {
     histBoth: "🎯 الهدفين",
     histOpen: "⏳ مفتوحة",
     histSl: "🛑 وقف الخسارة",
+    histBreakeven: "⚖️ تعادل",
     histScalp: "سكالبنج",
     histNormal: "سوينج",
     cardScalp: "سكالبنج - سريعة المدى M15",
@@ -1309,6 +1312,7 @@ const T = {
     histBoth: "🎯 Both targets hit",
     histOpen: "⏳ Open",
     histSl: "🛑 Stop loss hit",
+    histBreakeven: "⚖️ Breakeven",
     histScalp: "Scalping",
     histNormal: "Swing",
     cardScalp: "Scalping - Short term M15",
@@ -1958,9 +1962,14 @@ function renderHistory() {
     let badgeCls = "open", badgeTxt = t("histOpen");
     if (e.result === "both") { badgeCls = "both"; badgeTxt = t("histBoth"); }
     else if (e.result === "tp1") { badgeCls = "tp1"; badgeTxt = t("histTp1"); }
-    else if (e.result === "sl") { badgeCls = "sl"; badgeTxt = t("histSl"); }
+    else if (e.result === "sl") {
+      if (e.entry != null && e.sl != null && Number(e.sl) === Number(e.entry)) { badgeCls = "breakeven"; badgeTxt = t("histSl"); }
+      else { badgeCls = "sl"; badgeTxt = t("histSl"); }
+    }
     let res = '<div class="h-res ' + badgeCls + '">' + esc(badgeTxt) + "</div>";
     if (e.result_at) res = '<div class="h-res ' + badgeCls + '">' + esc(badgeTxt) + " — " + esc(t("histResultAt")) + " " + esc(fmtDateTime(e.result_at)) + "</div>";
+    let beLine = "";
+    if (badgeCls === "breakeven") beLine = '<div class="h-be">' + esc(t("histBreakeven")) + "</div>";
     let ptsLine = "";
     const pts = histPoints(e);
     if (pts > 0) ptsLine = '<div class="h-points">' + esc(t("histPoints")) + " <b>" + pts.toLocaleString("en-US") + "</b> " + esc(t("histPointsUnit")) + "</div>";
@@ -1973,7 +1982,7 @@ function renderHistory() {
       ' <span class="h-kind">' + esc(kind) + "</span></span><span>" + esc(fmtDateTime(e.posted_at)) + "</span></div>" +
       '<div class="h-nums">' + esc(t("entry")) + " <b>" + esc(e.entry) + "</b> · " + slHtml + "</div>" +
       '<div class="h-nums">' + esc(t("tp1")) + " <b>" + esc(e.tp1) + "</b></div>" +
-      '<div class="h-nums">' + esc(t("tp2")) + " <b>" + esc(e.tp2) + "</b></div>" + res + ptsLine + "</div>";
+      '<div class="h-nums">' + esc(t("tp2")) + " <b>" + esc(e.tp2) + "</b></div>" + res + beLine + ptsLine + "</div>";
   }).join("");
 }
 
