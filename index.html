@@ -1195,6 +1195,7 @@ const T = {
     histOpen: "⏳ مفتوحة",
     histSl: "🛑 وقف الخسارة",
     histBreakeven: "⚖️ تعادل",
+    histSlBe: "🟠 وقف الخسارة",
     histScalp: "سكالبنج",
     histNormal: "سوينج",
     cardScalp: "سكالبنج - سريعة المدى M15",
@@ -1313,6 +1314,7 @@ const T = {
     histOpen: "⏳ Open",
     histSl: "🛑 Stop loss hit",
     histBreakeven: "⚖️ Breakeven",
+    histSlBe: "🟠 Stop loss hit",
     histScalp: "Scalping",
     histNormal: "Swing",
     cardScalp: "Scalping - Short term M15",
@@ -1963,7 +1965,7 @@ function renderHistory() {
     if (e.result === "both") { badgeCls = "both"; badgeTxt = t("histBoth"); }
     else if (e.result === "tp1") { badgeCls = "tp1"; badgeTxt = t("histTp1"); }
     else if (e.result === "sl") {
-      if (e.entry != null && e.sl != null && Number(e.sl) === Number(e.entry)) { badgeCls = "breakeven"; badgeTxt = t("histSl"); }
+      if (e.entry != null && e.sl != null && Number(e.sl) === Number(e.entry)) { badgeCls = "breakeven"; badgeTxt = t("histSlBe"); }
       else { badgeCls = "sl"; badgeTxt = t("histSl"); }
     }
     let res = '<div class="h-res ' + badgeCls + '">' + esc(badgeTxt) + "</div>";
