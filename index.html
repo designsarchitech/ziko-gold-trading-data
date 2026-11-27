@@ -46,7 +46,7 @@ html { scroll-behavior: smooth; }
 .sec-nav a { flex: 0 0 auto; background: #221f15; border: 1.5px solid #d4af37; color: #e8c85a; border-radius: 999px; padding: 8px 14px; font-size: 14px; font-weight: 800; text-decoration: none; white-space: nowrap; }
 .sec-nav a:active { background: #2e2a1a; }
 .sec-nav a .new-badge { background: #d4af37; color: #141419; font-size: 10px; border-radius: 999px; padding: 1px 6px; margin-inline-start: 4px; font-weight: 800; }
-#sec-signals, #sec-history, #topNewsBox, #agendaSection, #newsArchive { scroll-margin-top: 64px; }
+#sec-signals, #sec-history, #sec-news, #agendaSection, #newsArchive { scroll-margin-top: 64px; }
   .pill .dot { width: 9px; height: 9px; border-radius: 50%; background: #2fbf71; display: inline-block; }
   .pill .dot.closed { background: #e05252; }
   .top-alert-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin: 16px 0 0; background: linear-gradient(180deg, #e8c15a, #c9a13b); color: #1a1405; border: none; border-radius: 14px; padding: 14px 16px; font-size: 17px; font-weight: 800; font-family: inherit; cursor: pointer; }
@@ -227,8 +227,7 @@ html { scroll-behavior: smooth; }
 
   <nav class="sec-nav">
     <a href="#sec-signals" data-i18n="navSignals"></a>
-    <a href="#topNewsBox" data-i18n="navTopNews"></a>
-    <a href="#newsLatest" data-i18n="navLatest"></a>
+    <a href="#sec-news" data-i18n="newsTitle"></a>
     <a href="#sec-history" data-i18n="navHistory"></a>
     <a href="#agendaSection" data-i18n="navAgenda" id="navAgendaLink"></a>
     <a href="#sec-subscribe"><span data-i18n="navSubscribe"></span> <span class="new-badge" data-i18n="newBadge"></span></a>
@@ -255,9 +254,7 @@ html { scroll-behavior: smooth; }
   <h2 id="sec-signals" data-i18n="entrySignals"></h2>
   <div class="updated"><span data-i18n="lastUpdate"></span>: <span id="lastUpdate">—</span></div>
   <div id="signalCards"></div>
-  <div id="topNewsBox"></div>
-
-  <h2 data-i18n="newsTitle"></h2>
+  <h2 id="sec-news" data-i18n="newsTitle"></h2>
   <div id="newsList"></div>
 
   <h2 id="sec-history" data-i18n="historyTitle"></h2>
@@ -1179,7 +1176,8 @@ const T = {
     newBadge: "جديد",
     noNews: "لا توجد أخبار بعد.",
     latestNews: "الأحدث",
-    archiveNews: "أرشيف الأخبار",
+    topNews: "الأبرز",
+    archiveNews: "الأرشيف",
     newsChecked: "آخر فحص ناجح",
     showDetails: "عرض التفاصيل ▾",
     hideDetails: "إخفاء التفاصيل ▴",
@@ -1298,6 +1296,7 @@ const T = {
     newBadge: "NEW",
     noNews: "No news yet.",
     latestNews: "Latest",
+    topNews: "Top",
     archiveNews: "Archive",
     newsChecked: "Last successful check",
     showDetails: "Show details ▾",
@@ -1834,12 +1833,19 @@ function renderNews() {
   const news = (currentFeed && currentFeed.news) || [];
   const meta = (currentFeed && currentFeed.news_meta) || null;
   if (!news.length) { box.innerHTML = '<div class="empty">' + esc(t("noNews")) + "</div>"; return; }
-  // Sections: "الأحدث" (last 48h) and "أرشيف" (older). Items without a
-  // section field (old feed) render under "الأحدث" so nothing disappears.
+  // Sub-sections under "أخبار الذهب": "الأحدث" (last 48h), "الأبرز" (is_top),
+  // and "الأرشيف" (older). Items without a section field (old feed) render
+  // under "الأحدث" so nothing disappears.
   // The section never empties because of auto-deletion: the feed keeps
   // ~10 items and only drops the oldest archive item when a new one arrives.
   const latest = news.filter(function (n) { return (n.section || "latest") === "latest"; });
   const archive = news.filter(function (n) { return n.section === "archive"; });
+  // is_top = the most IMPORTANT displayed releases (26 Nov 2026):
+  // importance rank (FOMC statement/minutes, GDP, PCE first), then
+  // newest — not the first two blindly. Old feeds without the flag
+  // fall back to the first two, as before.
+  const top = news.filter(function (n) { return n.is_top; });
+  const topItems = top.length ? top : news.slice(0, 2);
   let html = "";
   if (meta && (meta.last_check_ok || meta.last_check_fail)) {
     html += "<div class=\"news-check\">";
@@ -1850,6 +1856,10 @@ function renderNews() {
   if (latest.length) {
     html += "<div class=\"news-section-label\" id=\"newsLatest\">" + esc(t("latestNews")) + "</div>" +
       latest.map(newsItemHtml).join("");
+  }
+  if (topItems.length) {
+    html += "<div class=\"news-section-label\" id=\"newsTop\">" + esc(t("topNews")) + "</div>" +
+      topItems.map(newsItemHtml).join("");
   }
   if (archive.length) {
     html += "<div class=\"news-section-label\" id=\"newsArchive\">" + esc(t("archiveNews")) + "</div>" +
@@ -2065,28 +2075,10 @@ function renderSummary() {
 }
 // Top 2 news, in its own section right after the entry signals — same data
 // as the news section.
-function renderTopNews() {
-  const box = document.getElementById("topNewsBox");
-  if (!box) return;
-  const news = (currentFeed && currentFeed.news) || [];
-  let html = "<h2>" + esc(t("summaryNews")) + "</h2>";
-  if (!news.length) {
-    html += "<div class=\"empty\">" + esc(t("noNews")) + "</div>";
-  } else {
-    // is_top = the 2 most IMPORTANT displayed releases (26 Nov 2026):
-    // importance rank (FOMC statement/minutes, GDP, PCE first), then
-    // newest — not the first two blindly. Old feeds without the flag
-    // fall back to the first two, as before.
-    const top = news.filter(function (n) { return n.is_top; });
-    html += (top.length ? top : news.slice(0, 2)).map(newsItemHtml).join("");
-  }
-  box.innerHTML = html;
-}
 function renderAll() {
   renderPrices();
   renderSummary();
   renderSignals();
-  renderTopNews();
   renderHistory();
   renderNews();
   renderAgenda();
