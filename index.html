@@ -1179,6 +1179,7 @@ const T = {
     topNews: "الأبرز",
     archiveNews: "الأرشيف",
     newsChecked: "آخر فحص ناجح",
+    cairoTime: "بتوقيت القاهرة",
     showDetails: "عرض التفاصيل ▾",
     hideDetails: "إخفاء التفاصيل ▴",
     newsCheckFail: "آخر فحص فاشل",
@@ -1299,6 +1300,7 @@ const T = {
     topNews: "Top",
     archiveNews: "Archive",
     newsChecked: "Last successful check",
+    cairoTime: "Cairo time",
     showDetails: "Show details ▾",
     hideDetails: "Hide details ▴",
     newsCheckFail: "Last failed check",
@@ -1849,7 +1851,7 @@ function renderNews() {
   let html = "";
   if (meta && (meta.last_check_ok || meta.last_check_fail)) {
     html += "<div class=\"news-check\">";
-    if (meta.last_check_ok) { html += esc(t("newsChecked") + ": " + fmtCheckTime(meta.last_check_ok)); }
+    if (meta.last_check_ok) { html += esc(fmtCheckTime(meta.last_check_ok) + " " + t("cairoTime")); }
     if (meta.last_check_fail) { html += (meta.last_check_ok ? " · " : "") + esc(t("newsCheckFail") + ": " + fmtCheckFail(meta.last_check_fail)); }
     html += "</div>";
   }
