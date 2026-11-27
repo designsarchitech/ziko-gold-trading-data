@@ -1976,7 +1976,9 @@ function renderHistory() {
     const pts = histPoints(e);
     if (pts > 0) ptsLine = '<div class="h-points">' + esc(t("histPoints")) + " <b>" + pts.toLocaleString("en-US") + "</b> " + esc(t("histPointsUnit")) + "</div>";
     else if (pts < 0) ptsLine = '<div class="h-points loss">' + esc(t("histPointsLost")) + " <b>" + Math.abs(pts).toLocaleString("en-US") + "</b> " + esc(t("histPointsUnit")) + "</div>";
-    let slHtml = esc(t("stopLoss")) + " <b>" + esc(e.sl) + "</b>";
+    let slLabel = esc(t("stopLoss"));
+    if (badgeCls === "breakeven") slLabel = slLabel.replace("🛑", "🟠");
+    let slHtml = slLabel + " <b>" + esc(e.sl) + "</b>";
     if (e.original_sl != null && e.sl != null && Number(e.original_sl) !== Number(e.sl)) {
       slHtml += " <span class=\"h-orig\">(" + esc(t("origSl")) + ": " + esc(e.original_sl) + ")</span>";
     }
