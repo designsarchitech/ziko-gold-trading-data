@@ -1383,9 +1383,9 @@ const T = {
     jrnImportBad: "الملف ده مش نسخة احتياطية صحيحة",
     jrnSampleNote: "بيانات تجريبية للمعاينة",
     jrnClearSamples: "مسح البيانات التجريبية",
-    jrnLive: "النتيجة الحالية",
+    jrnLive: "النتيجة الحالية (عائم)",
     jrnAtPrice: "بسعر",
-    jrnNoPrice: "السعر مش متاح دلوقتي",
+    jrnNoPrice: "السعر مش محدّث — النتيجة الحالية مش متاحة",
     bearish: "🔻 هابط",
     bullish: "🔺 صاعد",
     sideways: "➡️ عرضي",
@@ -1548,9 +1548,9 @@ const T = {
     jrnImportBad: "This file is not a valid backup",
     jrnSampleNote: "Sample data for preview",
     jrnClearSamples: "Clear sample data",
-    jrnLive: "Current result",
+    jrnLive: "Current result (floating)",
     jrnAtPrice: "at",
-    jrnNoPrice: "Price unavailable right now",
+    jrnNoPrice: "Price not updated — current result unavailable",
     bearish: "🔻 Bearish",
     bullish: "🔺 Bullish",
     sideways: "➡️ Sideways",
@@ -2395,21 +2395,21 @@ function jrnFromInputValue(v) {
 // Floating result of an OPEN trade vs the current price — same source
 // and same variable as the app (livePrices + livePriceAt), same pip
 // math as the signal tracker (trackHtml): signed, direction-aware,
-// rounded. If no live price ever arrived (preview: polling disabled),
-// fall back to the last price embedded in the app (feed snapshot spot)
-// with ITS real time, so an old number never looks current. Returns
-// null when no price is available at all. Floating points NEVER enter
-// the monthly net or the win rate (realised points only) — they show
-// in the trade card only.
+// rounded. Freshness gate: only a price fetched within the last 15
+// minutes counts — a stored/snapshot price (days old) must NEVER
+// produce a floating number; returns null and the card shows the
+// unavailable state. Floating points NEVER enter the monthly net or
+// the win rate (realised points only) — they show in the trade card
+// only. Preview: one price fetch on load (see the polling-disable
+// block); live: the app's 60s price poll keeps livePrices fresh.
 function jrnLivePrice(tr) {
   var key = tr.asset === "XAGUSD" ? "silver" : "gold";
   var price = livePrices[key];
   var at = livePriceAt[key];
-  if (typeof price === "number" && isFinite(price)) return { price: price, at: at };
-  var spot = (typeof currentFeed !== "undefined" && currentFeed && currentFeed.spot) ? currentFeed.spot[key] : null;
-  var upd = (typeof currentFeed !== "undefined" && currentFeed) ? currentFeed.updated_at : null;
-  if (typeof spot === "number" && isFinite(spot)) return { price: spot, at: upd };
-  return null;
+  if (typeof price !== "number" || !isFinite(price) || !at) return null;
+  var age = Date.now() - new Date(at).getTime();
+  if (!isFinite(age) || age > 15 * 60 * 1000) return null;
+  return { price: price, at: at };
 }
 function jrnFloatPoints(tr) {
   var lp = jrnLivePrice(tr);
@@ -3062,6 +3062,13 @@ applyLang();
 // setTimeout(refreshAll, 300); setInterval(refreshFeed, 30000);
 // setInterval(refreshPrices, 60000); setInterval(updateMarketPill, 60000);)
 hideBanner();
+// PREVIEW ONLY: one price fetch on load (not a timer) — same source
+// and same variables as the app (refreshPrices -> livePrices +
+// livePriceAt) — so the journal's floating result uses a fresh live
+// price. Signals/news stay frozen; if the fetch fails the floating
+// line shows the unavailable state. The live app uses its own 60s
+// price poll instead (no fetch added there).
+if (typeof refreshPrices === "function") refreshPrices().then(function () { renderJournal(); }, function () { renderJournal(); });
 // Intro audio (Ziko, 27 Nov 2026): 4s clip of Kevin MacLeod "Volatile
 // Reaction" (2:15-2:19) plays with the splash. Browsers block autoplay with
 // sound until the user interacts, so try immediately and fall back to the
