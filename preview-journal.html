@@ -197,6 +197,7 @@ html { scroll-behavior: smooth; }
   .jrn-badge.open { color: #ffd75e; background: rgba(255,215,94,.12); }
   .jrn-trade-line { font-size: 14px; color: #c9c2ae; margin-top: 6px; line-height: 1.6; }
   .jrn-trade-pts { font-size: 15px; font-weight: 800; margin-top: 6px; }
+  .jrn-float-meta { color: #9a9aa3; font-size: 13px; }
   .jrn-empty { text-align: center; color: #9a9aa3; font-size: 15px; line-height: 1.8; padding: 18px 10px; }
   .jrn-backup { text-align: center; margin-top: 6px; font-size: 13px; color: #9a9aa3; }
   .jrn-backup a, .jrn-backup label { color: #9a9aa3; cursor: pointer; text-decoration: underline; }
@@ -1382,6 +1383,9 @@ const T = {
     jrnImportBad: "الملف ده مش نسخة احتياطية صحيحة",
     jrnSampleNote: "بيانات تجريبية للمعاينة",
     jrnClearSamples: "مسح البيانات التجريبية",
+    jrnLive: "النتيجة الحالية",
+    jrnAtPrice: "بسعر",
+    jrnNoPrice: "السعر مش متاح دلوقتي",
     bearish: "🔻 هابط",
     bullish: "🔺 صاعد",
     sideways: "➡️ عرضي",
@@ -1508,7 +1512,7 @@ const T = {
     jrnNote: "Your recorded trades only — not the signals total",
     jrnNet: "Month net",
     jrnWinRate: "Win rate",
-    jrnCount: "trades",
+    jrnCount: "Trades",
     jrnOpenCount: "open",
     jrnAdd: "+ New trade",
     jrnAsset: "Asset",
@@ -1544,6 +1548,9 @@ const T = {
     jrnImportBad: "This file is not a valid backup",
     jrnSampleNote: "Sample data for preview",
     jrnClearSamples: "Clear sample data",
+    jrnLive: "Current result",
+    jrnAtPrice: "at",
+    jrnNoPrice: "Price unavailable right now",
     bearish: "🔻 Bearish",
     bullish: "🔺 Bullish",
     sideways: "➡️ Sideways",
@@ -2373,6 +2380,7 @@ function jrnMonthLabel(ym) {
   } catch (e) { return ym; }
 }
 function jrnToInputValue(iso) {
+  if (!iso) return ""; // null/undefined/"" must stay empty: new Date(null) is 1970-01-01, not Invalid
   try {
     var d = new Date(iso);
     if (isNaN(d.getTime())) return "";
@@ -2383,6 +2391,34 @@ function jrnToInputValue(iso) {
 function jrnFromInputValue(v) {
   if (!v) return "";
   try { var d = new Date(v); return isNaN(d.getTime()) ? "" : d.toISOString(); } catch (e) { return ""; }
+}
+// Floating result of an OPEN trade vs the current price — same source
+// and same variable as the app (livePrices + livePriceAt), same pip
+// math as the signal tracker (trackHtml): signed, direction-aware,
+// rounded. If no live price ever arrived (preview: polling disabled),
+// fall back to the last price embedded in the app (feed snapshot spot)
+// with ITS real time, so an old number never looks current. Returns
+// null when no price is available at all. Floating points NEVER enter
+// the monthly net or the win rate (realised points only) — they show
+// in the trade card only.
+function jrnLivePrice(tr) {
+  var key = tr.asset === "XAGUSD" ? "silver" : "gold";
+  var price = livePrices[key];
+  var at = livePriceAt[key];
+  if (typeof price === "number" && isFinite(price)) return { price: price, at: at };
+  var spot = (typeof currentFeed !== "undefined" && currentFeed && currentFeed.spot) ? currentFeed.spot[key] : null;
+  var upd = (typeof currentFeed !== "undefined" && currentFeed) ? currentFeed.updated_at : null;
+  if (typeof spot === "number" && isFinite(spot)) return { price: spot, at: upd };
+  return null;
+}
+function jrnFloatPoints(tr) {
+  var lp = jrnLivePrice(tr);
+  if (!lp) return null;
+  var pip = tr.asset === "XAGUSD" ? 0.01 : 0.10;
+  var entry = Number(tr.entry);
+  if (!isFinite(entry)) return null;
+  var diff = tr.dir === "BUY" ? (lp.price - entry) : (entry - lp.price);
+  return { pts: Math.round(diff / pip), price: lp.price, at: lp.at };
 }
 function renderJournal() {
   var box = document.getElementById("journalBox");
@@ -2425,11 +2461,23 @@ function renderJournal() {
       ptsLine = '<div class="jrn-trade-pts"><span class="' + pc + '">' + (p > 0 ? "+" : "") + p.toLocaleString("en-US") + " " + esc(t("histPointsUnit")) + "</span></div>";
     }
     var closeTxt = (tr.close !== null && tr.close !== undefined && tr.close !== "") ? fmtPrice(tr.close) : "—";
+    var arr = (document.documentElement.getAttribute("dir") === "ltr") ? "→" : "←";
+    var floatLine = "";
+    if (cls === "open") {
+      var fl = jrnFloatPoints(tr);
+      if (fl) {
+        var fc = fl.pts > 0 ? "chg up" : (fl.pts < 0 ? "chg down" : "");
+        floatLine = '<div class="jrn-trade-line">' + esc(t("jrnLive")) + ": <span class=\"" + fc + "\">" + (fl.pts > 0 ? "+" : "") + fl.pts.toLocaleString("en-US") + " " + esc(t("histPointsUnit")) + "</span> <span class=\"jrn-float-meta\">· " + esc(t("jrnAtPrice")) + " " + esc(fmtPrice(fl.price)) + " · " + esc(t("lastUpdate")) + " " + esc(fmtDateTime(fl.at)) + "</span></div>";
+      } else {
+        floatLine = '<div class="jrn-trade-line">' + esc(t("jrnLive")) + ": —</div>" +
+          '<div class="jrn-trade-line jrn-float-meta">' + esc(t("jrnNoPrice")) + "</div>";
+      }
+    }
     html += '<div class="jrn-trade" data-jrn-id="' + esc(tr.id) + '">' +
       '<div class="jrn-trade-top"><span class="jrn-trade-title">' + esc(metal) + " · " + esc(dir) + '</span><span class="jrn-badge ' + cls + '">' + esc(badgeTxt) + "</span></div>" +
-      '<div class="jrn-trade-line">' + esc(t("jrnEntry")) + ": " + esc(fmtPrice(tr.entry)) + " ← " + esc(t("jrnClose")) + ": " + esc(closeTxt) + "</div>" +
+      '<div class="jrn-trade-line">' + esc(t("jrnEntry")) + ": " + esc(fmtPrice(tr.entry)) + " " + arr + " " + esc(t("jrnClose")) + ": " + esc(closeTxt) + "</div>" +
       '<div class="jrn-trade-line">' + esc(fmtDateTime(tr.openedAt)) + (tr.closedAt ? " — " + esc(fmtDateTime(tr.closedAt)) : "") + "</div>" +
-      ptsLine + "</div>";
+      floatLine + ptsLine + "</div>";
   });
   list.innerHTML = html;
   if (monthTrades.length === 0) {
@@ -2454,6 +2502,7 @@ function jrnSetDirSeg() {
     b.classList.toggle("sel-buy", d === "BUY" && jrnFormDir === "BUY");
     b.classList.toggle("sel-sell", d === "SELL" && jrnFormDir === "SELL");
   });
+  if (jrnFormDir) document.getElementById("jrnDirErr").style.display = "none";
 }
 function jrnCheckSides() {
   var entry = jrnNum(document.getElementById("jrnEntry").value);
